@@ -34,3 +34,13 @@ Lsys objects are written and read to a file like such:
 """
 
 # TODO
+
+def getFromFile( filename ):
+    """ Open a file designated by 'filename' and return a colleciton lsys objects parsed from it. """
+    # TODO
+    pass
+
+def writeToFile( filename, lst ):
+    """ Write the given list 'lst' to a file w/ the given 'filename'. Overwrites contents of file. """
+    # TODO
+    pass
