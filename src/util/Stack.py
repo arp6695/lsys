@@ -48,3 +48,6 @@ class Stack( object ):
     def isEmpty( self ):
         """ True iff top is None -> Stack is empty"""
         return self.top == None
+
+def getStack():
+    return Stack

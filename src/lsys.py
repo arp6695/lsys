@@ -78,13 +78,14 @@ class lsys( object ):
         alphabetSTR = "[{}]".format( str(self.alphabet).replace( "\'", "" ))
         axiomSTR = "[{}]".format( self.axiom )
         angleSTR = "[{}]".format( self.angle )
+        nameSTR = "[{}]".format( self.name )
 
         rulesetSTR = ""
         for key in self.ruleset.keys():
             rulesetSTR += "({} -> {})".format( key, self.ruleset[key] )
         rulesetSTR = "[{}]".format( rulesetSTR )
 
-        return "\{ {0}, {1}, {2}, {3} \};".format( alphabetSTR, axiomSTR, rulesetSTR, angleSTR )
+        return "{ {0}, {1}, {2}, {3}, {4} };".format( alphabetSTR, axiomSTR, rulesetSTR, angleSTR, nameSTR )
 
     ## Getters & Setters ##
 
@@ -104,6 +105,9 @@ class lsys( object ):
     def setAxiom( axiom ):
         assert isinstance( axiom, str )
         self.axiom = axiom
+
+    def setName( name ):
+        self.name = name
 
     def getName():
         return self.name

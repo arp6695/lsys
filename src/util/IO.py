@@ -33,8 +33,6 @@ Lsys objects are written and read to a file like such:
 
 """
 
-# TODO
-
 def getFromFile( filename ):
     """ Open a file designated by 'filename' and return a colleciton lsys objects parsed from it. """
     # TODO
