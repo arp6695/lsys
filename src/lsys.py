@@ -89,40 +89,43 @@ class lsys( object ):
 
     ## Getters & Setters ##
 
-    def addRule( old, new ):
+    def addRule( self, old, new ):
         """ Add a rule to the lsys ruleset """
         assert old not in self.ruleset.keys()
         self.ruleset[old] = new
 
-    def setAngle( angle ):
+    def setAngle( self, angle ):
         assert isinstance( angle, int )
         self.angle = angle
 
-    def setAlphabet( alphabet ):
+    def setAlphabet( self, alphabet ):
         assert isinstance( lst, list )
         self.alphabet = alphabet
 
-    def setAxiom( axiom ):
+    def setAxiom( self, axiom ):
         assert isinstance( axiom, str )
         self.axiom = axiom
 
-    def setName( name ):
+    def setName( self, name ):
         self.name = name
 
-    def getName():
+    def setRuleSet( self, ruleset ):
+        self.ruleset = ruleset
+
+    def getName(self):
         return self.name
 
-    def getAngle():
+    def getAngle(self):
         return self.angle
 
-    def getAxiom():
+    def getAxiom(self):
         return self.axiom
 
-    def getAlphabet():
+    def getAlphabet(self):
         # TODO 'import copy' and return a deepcopy instead
         return self.alphabet
 
-    def getRuleset():
+    def getRuleset(self):
         # TODO 'import copy' and return a deepcopy instead
         return self.ruleset
 

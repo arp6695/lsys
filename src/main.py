@@ -15,13 +15,15 @@ The alphabet has preset tokens that automatically correspond to turtle actions:
     ']' - Pop tuple w/ turtle position and angle off of stack, reset turtle position & angle
     'X', 'Y', & 'Z' - Generic Constants - no action
 
+You are currently in the frontend for lsys
 Following commands are:
-    'load [filename]' or 'l [filename]' -   read and parse lsys objects from a given data file
-    'display' or 'd'                    -   print all currently loaded lsys objects
-    'run [lsys name]'                   -   Create a picture for the lsys
-    'help'                              -   print help
-    'size [int]' or 's [int]'           -   change the size of the picture (1 by default)
-    'exit' or 'quit' or 'q'             -   Quit
+    'load [file]' or 'l [file]'         -   Read and parse lsys objects from a given data file
+                                            (example files exist in src/data/)
+    'display' or 'd'                    -   Print all currently loaded lsys objects
+    'run [lsys name]'                   -   Run recursions on a loaded lsys object, uses python's turtle
+    'help'                              -   Print this help screen
+    'size [int]' or 's [int]'           -   Change the size of the picture (1 by default)
+    'exit' or 'quit' or 'q'             -   Quit the program
 """
 
 import sys
@@ -29,26 +31,29 @@ from turtle import *
 from util.IO import *
 from util.Stack import *
 
-SIZE = 1
 STACK = getStack()
-ANGLE = 90
 
-def chooseAction( token ):
-    """ Determine which action to use, given a string token. """
+def chooseAction( token, size, angle=0 ):
+    """
+    Determine which turtle action to use.
+    Helper for recursive turtle implementation
+    param: token - a string, token from lsys alphabet
+    param: size - an integer, the length the turtle will go forward
+    param: angle - an integer, the angle associated with the lsys
+    """
     global SIZE, STACK, ANGLE
     if token == "F" or token == "G":
         forward( SIZE )
     elif token == "-":
-        right( ANGLE )
+        right( angle )
     elif token == "+":
-        left( ANGLE )
+        left( angle )
     elif token == "[":
         STACK.push( (getpos(), heading()) )
     elif token == "]":
         tpl = STACK.pop()
         setpos( tpl[0] )
         seth( tpl[1] )
-
     return None
 
 def load( filename ):
@@ -58,16 +63,23 @@ def load( filename ):
 
 def printCollection( lst ):
     """ Print each lsys object in the given list. """
-    # TODO
-    pass
+
+    if len(lst) == 0:
+        return
+
+    for obj in lst:
+        print("-" * 20)
+        print(obj)
+    print("-" * 20)
 
 def printHelp():
     """ Print Help """
-    print( "TODO" )
+    for line in open("src/help.txt"):
+        print(line)
 
 def main():
-    global SIZE
-    lsysCollection = dict()     # Colleciton of lsys objects currently loaded
+    size = 1
+    lsysCollection = list()     # Colleciton of lsys objects currently loaded
 
     # Intro to everything, check for loadable file
     print( "Hello. Welcome to the interpreter frontend for lsys." )
@@ -89,7 +101,7 @@ def main():
 
         # Prompt, extract command term and params
         userIN = input( ">" )
-        cmdTerm = userIN.split(" ")[0].lower()
+        cmdTerm = userIN.strip(" ").split(" ")[0].lower()
         if( len(userIN.split(" ")) == 2 ):
             param = userIN.split(" ")[1]
         else:
@@ -100,7 +112,7 @@ def main():
             if param == None:
                 print( "Invalid use of 'load'. Usage \'load [filename]\'" )
                 continue
-            load( param )
+            lsysCollection += getLsysFromFile( param )
 
         elif cmdTerm == 'help' or cmdTerm == 'h':
             printHelp()
@@ -111,18 +123,31 @@ def main():
         elif cmdTerm == 'size' or cmdTerm == 's':
             if not param.isdigit():
                 print( "Invalid use of 'size'. Usage \'size [filename]\'" )
-                continue
-            SIZE = int(param)
+            else:
+                size = int(param)
+                print( "Size is now set to %d.", size )
 
         elif cmdTerm == 'run' or cmdTerm == 'r':
-            # TODO
+            for obj in lsysCollection:
+                if obj.getName() == param:
+                    print("Found an lsys called '%s'. ", endl="")
+                    try:
+                        n = int(input("How many recursions would you like? "))
+
+                        # TODO Run recursions here
+
+                    except ValueError:
+                        print("That is not a valid number of recursions. Aborting...")
+                        break
+                    break
+            #print("That lsys does not seem to be loaded.")
             pass
 
         elif cmdTerm == 'exit' or cmdTerm == 'quit' or cmdTerm == 'q':
             exit()
-            
+
         else:
-            print("Unknown command.")
+            print("Unknown command: '%s'", cmdTerm  )
 
 if __name__ == "__main__":
     main()
