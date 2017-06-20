@@ -89,6 +89,10 @@ class lsys( object ):
 
     ## Getters & Setters ##
 
+    def transformRule( self, token ):
+        """ Return the transformed string given a token from the ruleset. """
+        return self.ruleset[token]
+
     def addRule( self, old, new ):
         """ Add a rule to the lsys ruleset """
         assert old not in self.ruleset.keys()
@@ -99,7 +103,7 @@ class lsys( object ):
         self.angle = angle
 
     def setAlphabet( self, alphabet ):
-        assert isinstance( lst, list )
+        assert isinstance( alphabet, list )
         self.alphabet = alphabet
 
     def setAxiom( self, axiom ):
@@ -109,7 +113,7 @@ class lsys( object ):
     def setName( self, name ):
         self.name = name
 
-    def setRuleSet( self, ruleset ):
+    def setRuleset( self, ruleset ):
         self.ruleset = ruleset
 
     def getName(self):
@@ -131,7 +135,7 @@ class lsys( object ):
 
 def createLsys():
     """ Create and return an lsys with default params """
-    return lsys( list(), str(), dict(), 0 )
+    return lsys( list(), str(), dict(), "default_name", 0 )
 
 def genStringItr( l, n ):
     """

@@ -9,7 +9,7 @@ Lsys objects are written and read to a file like such:
         { ... };
 
     - Object fields seperated commas, encapsulated by brackets
-        { [], [], [], [] };
+        { (), (), (), () };
 
     - Field 1: Alphabet tokens seperated by commas
         [A1, A2, A3, ... An]
@@ -47,15 +47,19 @@ def getLsysFromString( string ):
     """
     result = createLsys()
 
+    print("Parsing the string:" + string)
+
     # Remove '{', '}', ';' and ' ' (space) from the ends of the string
     # Split string by ']'
-    tokens = string.strip("\{\}; ").replace(" ", "").split("]")
+    tokens = string.strip("\{\}; ").replace(" ", "").split(")")
     for i in range( len(tokens) ):
-        tokens[i] = tokens[i].strip(",[")
+        tokens[i] = tokens[i].strip(",(")
+
+    #print( "tokens:" + str(tokens) )
 
     # Parse the ruleset
     ruleset = dict()
-    for rule in tokens[3].replace("(", "").replace(")", "").split(","):
+    for rule in tokens[2].split(","):
         # a 'rule' is of the form 'ABC->DEF'
         fromStr = rule.split("->")[0]
         toStr = rule.split("->")[1]
@@ -68,6 +72,7 @@ def getLsysFromString( string ):
     result.setAngle( int(tokens[3]) )
     result.setName( tokens[4] )
 
+    #print("Parsed an lsys object:\n" + str(result) )
     return result
 
 def getLsysFromFile( filename ):
@@ -76,7 +81,7 @@ def getLsysFromFile( filename ):
     result = []
     for line in open(filename):
         for string in line.split(";"):
-            if string != "":
+            if not string.isspace():
                 result.append( getLsysFromString( string ) )
     return result
 

@@ -1,0 +1,9 @@
+{ (A, B, F, +, -), (FA), (A -> A+BF+, B -> -FA-Y), (90), (Dragon Curve) };
+{ (F, G, +, -), (F-G-G), (F->F-G+F+G-F, G->GG), (120), (SierpinskiTriangle)};
+{ (1, 0, [, ], +, -), (0), ( 1->11, 0-> 1[+0]-0 ), (45), (FractalTree)};
+{ (F, +, -), (F), (F->F+F−F−F+F), (90), (KochCurve) };
+{ (F, G, +, -), (F), (F->+G−F−G+,G->−F+G+F−), (60), (SierpinskiTriangleApprox)};
+{ (X, F, [, ], +, -), (X), ( X->F[−X][X]F[−X]+FX , F->FF ), (25), (FractalPlant)};
+{ (F, +, -), (F), (F->+F--F+), (45), (LevyCurve)};
+{ (A, B, F, +, -), (A), ( A->-BF+AFA+FB-, B->+AF-BFB-FA+ ), (90), (HilbertCurve)};
+{ (F, +, -), (F), (F->F+F--F+F), (60), (KochSnow)};

@@ -9,13 +9,14 @@ Goto 1
 The alphabet has preset tokens that automatically correspond to turtle actions:
     'F' - Forward by a given unit (Variable)
     'G' - Forward by a given unit (Constant)
+    'B' - Backward by a given unit (Constant)
     '+' - Left by the lsys angle
     '-' - Rigth by the lsys angle
     '[' - Push tuple w/ turtle position and angle onto stack
     ']' - Pop tuple w/ turtle position and angle off of stack, reset turtle position & angle
-    'X', 'Y', & 'Z' - Generic Constants - no action
+    '0' & '1' - Forward and then backward
+    'A', 'B', 'C', 'X', 'Y', & 'Z' - Generic Constants - no action
 
-You are currently in the frontend for lsys
 Following commands are:
     'load [file]' or 'l [file]'         -   Read and parse lsys objects from a given data file
                                             (example files exist in src/data/)
@@ -24,6 +25,8 @@ Following commands are:
     'help'                              -   Print this help screen
     'size [int]' or 's [int]'           -   Change the size of the picture (1 by default)
     'exit' or 'quit' or 'q'             -   Quit the program
+
+TODO: Enable stochasticism (redo [slightly] the parsing, allow for variability)
 """
 
 import sys
@@ -33,6 +36,13 @@ from util.Stack import *
 
 STACK = getStack()
 
+def turtleInit():
+    """ Initialize the turtle module """
+    tracer(0,0) # Refresh the drawing manually, must use turtle.update() at the end
+    # delay(0) # NOTE: This is an alternative to tracer, w/ no need for update()
+    reset()
+    setworldcoordinates( -300, -300, 300, 300 ) # NOTE: This may cause problems
+
 def chooseAction( token, size, angle=0 ):
     """
     Determine which turtle action to use.
@@ -41,25 +51,58 @@ def chooseAction( token, size, angle=0 ):
     param: size - an integer, the length the turtle will go forward
     param: angle - an integer, the angle associated with the lsys
     """
-    global SIZE, STACK, ANGLE
+    global STACK
+
+    # Defaults
     if token == "F" or token == "G":
-        forward( SIZE )
+        forward( size )
     elif token == "-":
         right( angle )
     elif token == "+":
         left( angle )
+
+    # Stack related
     elif token == "[":
         STACK.push( (getpos(), heading()) )
     elif token == "]":
         tpl = STACK.pop()
         setpos( tpl[0] )
         seth( tpl[1] )
+
+    # Fractal Tree related
+    elif token == "1":      # Draw a line segment and return
+        forward( size )
+        backward( size )
+    elif token == "0":      # Draws a line segment 'leaf'
+        forward(size)
+        lt(45)
+        forward(size/2)
+        backward(size/2)
+        rt(90)
+        forward(size/2)
+        backward(size/2)
+        lt(45)
+        backward(size)
     return None
 
-def load( filename ):
-    """ Open the file at 'filename' and return a collection of lsys objects. """
-    # TODO
-    pass
+def runLsys( lsys, n, size ):
+    """
+    Recursive function that recurses a given number of times, and determines turtle action.
+    lsys - an lsys object
+    n - a integer, number of recursions
+    """
+    runLsysHelper( lsys.getAxiom(), lsys, n, size )
+
+def runLsysHelper( string, lsys, n, size ):
+    """
+    Recursive Helper for 'runLsys'
+    """
+    for char in string:
+        if n <= 0:
+            chooseAction( char, size, lsys.getAngle() )
+        else:
+            runLsysHelper( lsys.transformRule( char ), lsys, n-1, size )
+    return None
 
 def printCollection( lst ):
     """ Print each lsys object in the given list. """
@@ -87,7 +130,7 @@ def main():
         filename = sys.argv[1]
         try:
             f = open( filename )
-            lsysCollection = getFromFile( filename )
+            lsysCollection = getLsysFromFile( filename )
             print( "Sucessfully loaded: {}. ".format(filename) )
 
         except FileNotFoundError:
@@ -133,8 +176,13 @@ def main():
                     print("Found an lsys called '%s'. ", endl="")
                     try:
                         n = int(input("How many recursions would you like? "))
+                        turtleInit()
+                        runLsys( lsys, n, size )
+                        toSave = input("Image Generated. Would you like to save it? (y/n)").lower()
+                        if toSave == "y":
 
-                        # TODO Run recursions here
+                            # TODO Save here.
+                            print("Saved.")
 
                     except ValueError:
                         print("That is not a valid number of recursions. Aborting...")
