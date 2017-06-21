@@ -75,15 +75,15 @@ class lsys( object ):
     def to_CSV_String( self ):
         """ Return String representation of self (file writeable) """
 
-        alphabetSTR = "[{}]".format( str(self.alphabet).replace( "\'", "" ))
-        axiomSTR = "[{}]".format( self.axiom )
-        angleSTR = "[{}]".format( self.angle )
-        nameSTR = "[{}]".format( self.name )
+        alphabetSTR = "({})".format( str(self.alphabet).replace( "\'", "" ))
+        axiomSTR = "({})".format( self.axiom )
+        angleSTR = "({})".format( self.angle )
+        nameSTR = "({})".format( self.name )
 
         rulesetSTR = ""
         for key in self.ruleset.keys():
-            rulesetSTR += "({} -> {})".format( key, self.ruleset[key] )
-        rulesetSTR = "[{}]".format( rulesetSTR )
+            rulesetSTR += "{}->{},".format( key, self.ruleset[key] )
+        rulesetSTR = "({})".format( rulesetSTR ).rstrip(",")
 
         return "{ {0}, {1}, {2}, {3}, {4} };".format( alphabetSTR, axiomSTR, rulesetSTR, angleSTR, nameSTR )
 
@@ -92,6 +92,7 @@ class lsys( object ):
     def transformRule( self, token ):
         """ Return the transformed string given a token from the ruleset. """
         return self.ruleset[token]
+
 
     def addRule( self, old, new ):
         """ Add a rule to the lsys ruleset """
@@ -140,7 +141,7 @@ def createLsys():
 def genStringItr( l, n ):
     """
     Generate a symbol string that can be read and interpreted as turtle commands
-    Iterative
+    Iterative, see main.py for the recursive version, entitled: "runLsys"
     """
 
     if not isinstance( l, lsys ):

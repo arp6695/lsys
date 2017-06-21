@@ -50,4 +50,4 @@ class Stack( object ):
         return self.top == None
 
 def getStack():
-    return Stack
+    return Stack()

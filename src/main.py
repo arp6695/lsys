@@ -29,19 +29,24 @@ Following commands are:
 TODO: Enable stochasticism (redo [slightly] the parsing, allow for variability)
 """
 
-import sys
-from turtle import *
-from util.IO import *
-from util.Stack import *
+import sys                  # For Command Line Arguments
+from turtle import *        # For Drawing
+
+#from lsys import *
+from util.IO import *       # For Reading/Writing lsys to/from files
+from util.Stack import *    # For stack support
+
+import datetime             # For naming images
+import canvasvg             # For saving images; NOTE: This is a non-standard module -> 'pip install canvasvg'
 
 STACK = getStack()
 
 def turtleInit():
     """ Initialize the turtle module """
-    tracer(0,0) # Refresh the drawing manually, must use turtle.update() at the end
-    # delay(0) # NOTE: This is an alternative to tracer, w/ no need for update()
+    tracer(False) # Refresh the drawing manually, must use turtle.update() at the end
     reset()
-    setworldcoordinates( -300, -300, 300, 300 ) # NOTE: This may cause problems
+    setworldcoordinates( -300, -300, 300, 300 ) # NOTE: This may cause problems on different resolutions
+    hideturtle()
 
 def chooseAction( token, size, angle=0 ):
     """
@@ -63,69 +68,75 @@ def chooseAction( token, size, angle=0 ):
 
     # Stack related
     elif token == "[":
-        STACK.push( (getpos(), heading()) )
+        data = tuple( [position(), heading()] )
+        STACK.push( data )
     elif token == "]":
         tpl = STACK.pop()
+        penup()
         setpos( tpl[0] )
         seth( tpl[1] )
+        pendown()
 
     # Fractal Tree related
     elif token == "1":      # Draw a line segment and return
         forward( size )
-        backward( size )
+        #backward( size )
     elif token == "0":      # Draws a line segment 'leaf'
         forward(size)
+        """
         lt(45)
-        forward(size/2)
-        backward(size/2)
+        forward(size/4)
+        backward(size/4)
         rt(90)
-        forward(size/2)
-        backward(size/2)
+        forward(size/4)
+        backward(size/4)
         lt(45)
         backward(size)
+        """
+
+    #update()
     return None
 
-def runLsys( lsys, n, size ):
+def runLsys( l, n, size ):
     """
     Recursive function that recurses a given number of times, and determines turtle action.
     lsys - an lsys object
     n - a integer, number of recursions
     """
-    runLsysHelper( lsys.getAxiom(), lsys, n, size )
+    runLsysHelper( l.getAxiom(), l, n, size )
 
-def runLsysHelper( string, lsys, n, size ):
+def runLsysHelper( string, l, n, size ):
     """
     Recursive Helper for 'runLsys'
     """
     for char in string:
-        if n <= 0:
-            chooseAction( char, size, lsys.getAngle() )
+        if n <= 0 or char not in l.getRuleset().keys():
+            chooseAction( char, size, l.getAngle() )
         else:
-            runLsysHelper( lsys.transformRule( char ), lsys, n-1, size )
+            runLsysHelper( l.transformRule( char ), l, n-1, size )
     return None
 
 def printCollection( lst ):
     """ Print each lsys object in the given list. """
 
     if len(lst) == 0:
-        return
-
-    for obj in lst:
-        print("-" * 20)
-        print(obj)
-    print("-" * 20)
+        print("No lsys objects have been loaded.")
+    else:
+        print("Currently loaded objects are:")
+        for i in range(len(lst)):
+            print( "{}. {}".format( str(i+1), lst[i].getName()) )
 
 def printHelp():
-    """ Print Help """
+    """ Print Help: read help.txt """
     for line in open("src/help.txt"):
-        print(line)
+        print(line, end="")
 
 def main():
-    size = 1
+    size = 2
     lsysCollection = list()     # Colleciton of lsys objects currently loaded
 
     # Intro to everything, check for loadable file
-    print( "Hello. Welcome to the interpreter frontend for lsys." )
+    print( "Hello. Welcome to lsys." )
     if( len(sys.argv) == 2 ):
         filename = sys.argv[1]
         try:
@@ -135,7 +146,6 @@ def main():
 
         except FileNotFoundError:
             print( "Could not open file: {}".format(filename) )
-            print( "Usage: \'python3 path/to/main.py path/to/datafile.txt\'" )
     else:
         print( "No file was loaded. Use 'load [filename]' to parse a file for lsys objects." )
 
@@ -143,19 +153,28 @@ def main():
     while True:
 
         # Prompt, extract command term and params
-        userIN = input( ">" )
-        cmdTerm = userIN.strip(" ").split(" ")[0].lower()
-        if( len(userIN.split(" ")) == 2 ):
+        userIN = input( ">" ).strip(" ")
+        cmdTerm = userIN.split(" ")[0].lower()
+        if( len(userIN.split(" ")) >= 2 ):
             param = userIN.split(" ")[1]
         else:
             param = None
+
+        #print("Got tokens: {}".format(userIN.split(" ")))
 
         # Determine what should be done w/ the command term and param
         if cmdTerm == 'l' or cmdTerm == 'load':
             if param == None:
                 print( "Invalid use of 'load'. Usage \'load [filename]\'" )
                 continue
-            lsysCollection += getLsysFromFile( param )
+
+            try:
+                lsysCollection += getLsysFromFile( param )
+                print("Sucessfully loaded: {}. ".format(filename))
+            except FileNotFoundError:
+                print("Error: File was not found: {}".format(param) )
+            except IndexError:
+                print("Error: Invalid syntax in datafile.")
 
         elif cmdTerm == 'help' or cmdTerm == 'h':
             printHelp()
@@ -168,34 +187,63 @@ def main():
                 print( "Invalid use of 'size'. Usage \'size [filename]\'" )
             else:
                 size = int(param)
-                print( "Size is now set to %d.", size )
+                print( "Size is now set to {}.".format(size) )
 
         elif cmdTerm == 'run' or cmdTerm == 'r':
-            for obj in lsysCollection:
-                if obj.getName() == param:
-                    print("Found an lsys called '%s'. ", endl="")
+
+            # This will store the lsys object
+            obj = None
+
+            # Allow user to select lsys by number
+            if param.isdigit():
+                obj = lsysCollection[ int(param) - 1 ]
+
+            # Allow user to select lsys by name
+            else:
+                for l in lsysCollection:
+                    if l.getName() == param:
+                        obj = l
+
+            # Check if object was found
+            if obj == None:
+                print("Could not find an lsys w/ name '{}'".format(param))
+
+            else:
+                print("Using an lsys called {}.".format(obj.getName()))
+
+                try:
+                    n = int(userIN.split(" ")[2])
+                    # int(input("How many iterations should be performed? "))
+                    turtleInit()
+                    print("Generating image. This may or may not take a while.")
+
                     try:
-                        n = int(input("How many recursions would you like? "))
-                        turtleInit()
-                        runLsys( lsys, n, size )
-                        toSave = input("Image Generated. Would you like to save it? (y/n)").lower()
+                        runLsys( obj, n, size )
+                        update()
+                        toSave = input("Image Generated. Would you like to save it? (y/n) ").lower()
                         if toSave == "y":
+                            ts = getscreen().getcanvas()
+                            name = "{}_{}_{}.svg".format(obj.getName(), str(n), str( datetime.date.today() ))
+                            canvasvg.saveall( name, ts)     # Save as svg
+                            #ts.postscript(file=name)        # Save as eps (Does not save entire image)
 
-                            # TODO Save here.
-                            print("Saved.")
+                            print("Saved image w/ name: {}".format(name))
+                        else:
+                            print("Exited turtle w/o saving image. Done.")
 
-                    except ValueError:
-                        print("That is not a valid number of recursions. Aborting...")
-                        break
-                    break
-            #print("That lsys does not seem to be loaded.")
-            pass
+                    except RecursionError:
+                        print("A Stack Overflow occurred; try again w/ fewer iterations.")
+                except ValueError:
+                    print("Error: The number of iterations must be a non-negative integer. Aborting...")
+                except IndexError:
+                    print("Error: # of iterations not given. Usage: 'run [lsys_name/num] [#_of_iterations]'")
+
 
         elif cmdTerm == 'exit' or cmdTerm == 'quit' or cmdTerm == 'q':
             exit()
 
         else:
-            print("Unknown command: '%s'", cmdTerm  )
+            print("Unknown command: {}".format(cmdTerm) )
 
 if __name__ == "__main__":
     main()

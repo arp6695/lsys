@@ -47,7 +47,7 @@ def getLsysFromString( string ):
     """
     result = createLsys()
 
-    print("Parsing the string:" + string)
+    #print("Parsing the string:" + string)
 
     # Remove '{', '}', ';' and ' ' (space) from the ends of the string
     # Split string by ']'

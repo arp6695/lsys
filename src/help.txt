@@ -1,8 +1,8 @@
 'lsys' by Alex Piazza
 Following commands are:
-    'load [filename]' or 'l [filename]' -   Read and parse lsys objects from a given data file (example files exist in src/data/)
-    'display' or 'd'                    -   Print all currently loaded lsys objects
-    'run [lsys name]'                   -   Run recursions on a loaded lsys object, uses python's turtle, prompts for # of recursions
-    'help' or 'h'                       -   Print this screen
-    'size [int]' or 's [int]'           -   Change the size of the picture (1 by default)
-    'exit' or 'quit' or 'q'             -   Quit the program
+    'load [filename]'			-	Read and parse lsys objects from a given data file (example files exist in src/data/)
+    'display'				-	Print all currently loaded lsys objects
+    'run [lsys name or number] [int]'	-	Recursivly draw the given lsys w/ a given number of iterations
+    'help'				-	Display this screen
+    'size [int]'			-	Change the size of the picture (1 by default)
+    'exit' or 'quit'			-	Quit the program
