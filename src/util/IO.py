@@ -8,32 +8,15 @@ Lsys objects are written and read to a file like such:
     - Objects are seperated by semicolon, and encapsulated by braces
         { ... };
 
-    - Object fields seperated commas, encapsulated by brackets
+    - Object fields seperated commas
         { (), (), (), () };
 
-    - Field 1: Alphabet tokens seperated by commas
-        [A1, A2, A3, ... An]
+    { name, angle, axiom, rule1->newString1, rule2->newString2, ... ruleN->newStringN };
 
-    - Field 2: Starting string, NOT SEPERATED BY SPACES, nor commas
-        [ ABC...n ]
-
-    - Field 3: Rules, Different rules seperated by commas:
-        [ (), (), ... () ]
-        Rule are of this form: (AlphabetToken '->' NewString)
-        Parenthesis are not necessary
-        ( A -> ABC...n ),
-
-    - Field 4: Integer Angle (still in braces)
-        [n]
-
-    - Field 5: String name (In braces, no quotes)
-        [name_goes_here]
-
-    Generic Form:
-    { [A1, A2, A3, ... An], [ ABC...n ], [( A1 -> B1B2B3... ), ( A2 -> C1C2C3... ) ... ], [n], [str] };
-
-    Sample:
-    { [ A, B, C ], [ ABC ], [( A -> ABA ), ( B -> CAC )], [90], [HelloWorld] };
+    TODO :
+        Scostic Parsing: A( %50 )->ABA ; A( %50 )->BAB
+        Color Parsing: A->(abc123)FAB
+            (characters must be lowercase, and parenthesised ???)
 
 """
 
@@ -46,31 +29,26 @@ def getLsysFromString( string ):
     Helper Function for getFromFile
     """
     result = createLsys()
+    ruleset = dict()
 
-    #print("Parsing the string:" + string)
 
     # Remove '{', '}', ';' and ' ' (space) from the ends of the string
-    # Split string by ']'
-    tokens = string.strip("\{\}; ").replace(" ", "").split(")")
-    for i in range( len(tokens) ):
-        tokens[i] = tokens[i].strip(",(")
+    # Split string by comma
+    tokens = string.strip("\{\}; ").replace(" ", "").split(",")
 
-    #print( "tokens:" + str(tokens) )
+    #print("Split the line {} into tokens {}".format(string, tokens))
 
-    # Parse the ruleset
-    ruleset = dict()
-    for rule in tokens[2].split(","):
-        # a 'rule' is of the form 'ABC->DEF'
-        fromStr = rule.split("->")[0]
-        toStr = rule.split("->")[1]
-        ruleset[fromStr] = toStr
+    # Parse rules here
+    for i in range(3, len(tokens)):
+        fromString = tokens[i].split("->")[0]
+        toString = tokens[i].split("->")[1]
+        ruleset[fromString] = toString
 
     # Set all the fields of the lsys
-    result.setAlphabet( tokens[0].split(",") )
-    result.setAxiom( tokens[1] )
+    result.setName( tokens[0] )
+    result.setAngle( int(tokens[1]) )
+    result.setAxiom( tokens[2] )
     result.setRuleset( ruleset )
-    result.setAngle( int(tokens[3]) )
-    result.setName( tokens[4] )
 
     #print("Parsed an lsys object:\n" + str(result) )
     return result

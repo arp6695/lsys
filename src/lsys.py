@@ -85,14 +85,13 @@ class lsys( object ):
             rulesetSTR += "{}->{},".format( key, self.ruleset[key] )
         rulesetSTR = "({})".format( rulesetSTR ).rstrip(",")
 
-        return "{ {0}, {1}, {2}, {3}, {4} };".format( alphabetSTR, axiomSTR, rulesetSTR, angleSTR, nameSTR )
+        return "{ {0}, {1}, {2}, {3}, {4} };".format( nameSTR, angleSTR, axiomSTR, rulesetSTR )
 
     ## Getters & Setters ##
 
     def transformRule( self, token ):
         """ Return the transformed string given a token from the ruleset. """
         return self.ruleset[token]
-
 
     def addRule( self, old, new ):
         """ Add a rule to the lsys ruleset """

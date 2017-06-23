@@ -5,7 +5,7 @@ By: Alex Piazza
 
 Supports pushing, popping, & peeking
 Uses tuples as underlying data encapsulation
-    Tuples are of the form: ( some_data, referent_to_next )
+    Tuples are of the form: ( some_data, reference_to_next_tuple )
 
 """
 

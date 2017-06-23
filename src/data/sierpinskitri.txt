@@ -1,1 +1,0 @@
-{ [F, G, +, -], [F-G-G], [(F -> F-G+F+G-F),(G -> GG)], [120], [Sierpinski Triangle] };

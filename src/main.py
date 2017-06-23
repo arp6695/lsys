@@ -7,15 +7,13 @@ Prompt to save the image (defaults to scalable vector img)
 Goto 1
 
 The alphabet has preset tokens that automatically correspond to turtle actions:
-    'F' - Forward by a given unit (Variable)
-    'G' - Forward by a given unit (Constant)
-    'B' - Backward by a given unit (Constant)
-    '+' - Left by the lsys angle
-    '-' - Rigth by the lsys angle
+    'A', 'B', 'C', 'X', 'Y', & 'Z' - Generic Constants - no turtle action
+    'F' & 'G' - Forward by a given unit
+    'L' - Leaf - Forward, w/ two 'leaves'
+    '+' - Left by the lsys' angle
+    '-' - Rigth by the lsys' angle
     '[' - Push tuple w/ turtle position and angle onto stack
-    ']' - Pop tuple w/ turtle position and angle off of stack, reset turtle position & angle
-    '0' & '1' - Forward and then backward
-    'A', 'B', 'C', 'X', 'Y', & 'Z' - Generic Constants - no action
+    ']' - Pop tuple w/ turtle position and angle off of stack, apply turtle position & angle
 
 Following commands are:
     'load [file]' or 'l [file]'         -   Read and parse lsys objects from a given data file
@@ -27,26 +25,33 @@ Following commands are:
     'exit' or 'quit' or 'q'             -   Quit the program
 
 TODO: Enable stochasticism (redo [slightly] the parsing, allow for variability)
+TODO: Add runthru (run recursion for specified range), e.g. 'runthru 10 0 5')
+    Syntax = 'runthru [lsys_name/num] [beginning_int] [ending_int]'
 """
 
 import sys                  # For Command Line Arguments
-from turtle import *        # For Drawing
-
-#from lsys import *
-from util.IO import *       # For Reading/Writing lsys to/from files
-from util.Stack import *    # For stack support
-
+import os                   # For determining the current directory (image saving)
 import datetime             # For naming images
-import canvasvg             # For saving images; NOTE: This is a non-standard module -> 'pip install canvasvg'
+import turtle as t          # For Drawing
+
+from util.IO import *       # For Reading/Writing lsys to/from files
+from util.Stack import *    # For Stack support
+
+try:
+    import canvasvg         # For saving images; NOTE: This is a non-standard module -> 'pip install canvasvg'
+except ImportError:
+    print("Error: Could not import canvasvg. You will be unable to save images. \
+        Use 'pip install canvasvg' to intall the module.")
 
 STACK = getStack()
 
 def turtleInit():
     """ Initialize the turtle module """
-    tracer(False) # Refresh the drawing manually, must use turtle.update() at the end
-    reset()
-    setworldcoordinates( -300, -300, 300, 300 ) # NOTE: This may cause problems on different resolutions
-    hideturtle()
+    t.setup()
+    t.tracer(False) # Refresh the drawing manually, must use turtle.update() at the end
+    t.hideturtle()
+    t.setworldcoordinates( -300, -300, 300, 300 ) # NOTE: This may cause problems on different resolutions
+    t.reset()
 
 def chooseAction( token, size, angle=0 ):
     """
@@ -60,60 +65,66 @@ def chooseAction( token, size, angle=0 ):
 
     # Defaults
     if token == "F" or token == "G":
-        forward( size )
+        t.forward( size )
     elif token == "-":
-        right( angle )
+        t.right( angle )
     elif token == "+":
-        left( angle )
+        t.left( angle )
 
     # Stack related
     elif token == "[":
-        data = tuple( [position(), heading()] )
+        data = tuple( [t.position(), t.heading()] )
         STACK.push( data )
     elif token == "]":
         tpl = STACK.pop()
-        penup()
-        setpos( tpl[0] )
-        seth( tpl[1] )
-        pendown()
+        t.penup()
+        t.setpos( tpl[0] )
+        t.seth( tpl[1] )
+        t.pendown()
 
     # Fractal Tree related
-    elif token == "1":      # Draw a line segment and return
-        forward( size )
-        #backward( size )
-    elif token == "0":      # Draws a line segment 'leaf'
-        forward(size)
-        """
-        lt(45)
-        forward(size/4)
-        backward(size/4)
-        rt(90)
-        forward(size/4)
-        backward(size/4)
-        lt(45)
-        backward(size)
-        """
+    elif token == "L":      # Draws a line segment 'leaf'
+        t.forward(size)
+        t.lt(45)
+        t.forward(size/4)
+        t.backward(size/4)
+        t.rt(90)
+        t.forward(size/4)
+        t.backward(size/4)
+        t.lt(45)
 
-    #update()
     return None
 
-def runLsys( l, n, size ):
+def runLsys( l, n, s ):
     """
     Recursive function that recurses a given number of times, and determines turtle action.
-    lsys - an lsys object
-    n - a integer, number of recursions
+    l - an lsys object
+    n - an integer, number of recursions
+    s - an integer, unit size of turtle
     """
-    runLsysHelper( l.getAxiom(), l, n, size )
 
-def runLsysHelper( string, l, n, size ):
+    turtleInit()
+    print("The image is being generated. This may or may not take a while.")
+
+    try:
+        runLsysHelper( l.getAxiom(), l, n, s )
+        t.hideturtle()
+        t.update()
+        print("Image generated. Use 'save' command to save the image to file.")
+
+    except RecursionError:
+        print("A Stack Overflow Error occurred; try again w/ fewer iterations.")
+        return
+
+def runLsysHelper( string, l, n, s ):
     """
     Recursive Helper for 'runLsys'
     """
     for char in string:
         if n <= 0 or char not in l.getRuleset().keys():
-            chooseAction( char, size, l.getAngle() )
+            chooseAction( char, s, l.getAngle() )
         else:
-            runLsysHelper( l.transformRule( char ), l, n-1, size )
+            runLsysHelper( l.transformRule( char ), l, n-1, s )
     return None
 
 def printCollection( lst ):
@@ -128,53 +139,74 @@ def printCollection( lst ):
 
 def printHelp():
     """ Print Help: read help.txt """
-    for line in open("src/help.txt"):
+    for line in open( os.path.join( os.path.dirname(__file__), "/misc/help.txt" )):
         print(line, end="")
+
+def loadLsysFromFile( filename ):
+    """
+    Return an lsys collection gotten from a parsed filename.
+    Checks for errors and prints error messages.
+    """
+    lst = list()
+    try:
+        lst = getLsysFromFile( filename )
+        print("Sucessfully loaded: {}. Use 'display' to see the updated list of lsys objects.".format( filename ))
+        return lst
+    except FileNotFoundError:
+        print("Error: File was not found: {}".format( filename ) )
+    except IndexError:
+        print("Error: Invalid syntax in datafile.")
+    except ValueError:
+        print("Error: Invalid syntax in datafile.")
+    return lst
+
+def getLsysFromCollection( lst, param ):
+    obj = None
+
+    if param.isdigit():     # Allow user to select lsys by number in collection
+        try:
+            obj = lst[ int(param) - 1 ]
+        except IndexError:
+            obj = None
+
+    else:                   # Allow user to select lsys by name
+        for l in lsysCollection:
+            if l.getName() == param:
+                obj = l
+    return obj
 
 def main():
     size = 2
-    lsysCollection = list()     # Colleciton of lsys objects currently loaded
+    color = "black"
 
-    # Intro to everything, check for loadable file
+    # Initialization: check for loadable file
     print( "Hello. Welcome to lsys." )
-    if( len(sys.argv) == 2 ):
+    if( len(sys.argv) >= 2 ):
         filename = sys.argv[1]
-        try:
-            f = open( filename )
-            lsysCollection = getLsysFromFile( filename )
-            print( "Sucessfully loaded: {}. ".format(filename) )
-
-        except FileNotFoundError:
-            print( "Could not open file: {}".format(filename) )
+        # NOTE: command line filename will be relative to shell, not file
+        lsysCollection = loadLsysFromFile( filename )
     else:
+        lsysCollection = list()
         print( "No file was loaded. Use 'load [filename]' to parse a file for lsys objects." )
 
-    # Main loop
+    # User input loop
     while True:
 
         # Prompt, extract command term and params
-        userIN = input( ">" ).strip(" ")
-        cmdTerm = userIN.split(" ")[0].lower()
-        if( len(userIN.split(" ")) >= 2 ):
-            param = userIN.split(" ")[1]
+        userIN = input( "lsys>" ).lower().strip(" ").split(" ")
+        cmdTerm = userIN[0]
+        if( len(userIN) >= 2 ):
+            param = userIN[1]
         else:
             param = None
 
-        #print("Got tokens: {}".format(userIN.split(" ")))
-
         # Determine what should be done w/ the command term and param
-        if cmdTerm == 'l' or cmdTerm == 'load':
-            if param == None:
-                print( "Invalid use of 'load'. Usage \'load [filename]\'" )
-                continue
-
+        if cmdTerm == 'color' or cmdTerm == 'c':
             try:
-                lsysCollection += getLsysFromFile( param )
-                print("Sucessfully loaded: {}. ".format(filename))
-            except FileNotFoundError:
-                print("Error: File was not found: {}".format(param) )
-            except IndexError:
-                print("Error: Invalid syntax in datafile.")
+                # NOTE: This doesnt work, dunno why
+                t.color(param)
+            except t.TurtleGraphicsError:
+                print("Error: '{}' is not a valid color for the turtle.".format(param))
 
         elif cmdTerm == 'help' or cmdTerm == 'h':
             printHelp()
@@ -184,63 +216,82 @@ def main():
 
         elif cmdTerm == 'size' or cmdTerm == 's':
             if not param.isdigit():
-                print( "Invalid use of 'size'. Usage \'size [filename]\'" )
+                print( "Invalid use of 'size'. Usage \'size [int]\'" )
             else:
                 size = int(param)
-                print( "Size is now set to {}.".format(size) )
+                print( "Size has been set to {}.".format(size) )
 
         elif cmdTerm == 'run' or cmdTerm == 'r':
 
-            # This will store the lsys object
-            obj = None
+            obj = getLsysFromCollection( lsysCollection, param )
 
-            # Allow user to select lsys by number
-            if param.isdigit():
-                obj = lsysCollection[ int(param) - 1 ]
-
-            # Allow user to select lsys by name
-            else:
-                for l in lsysCollection:
-                    if l.getName() == param:
-                        obj = l
-
-            # Check if object was found
-            if obj == None:
-                print("Could not find an lsys w/ name '{}'".format(param))
+            if obj == None:         # Check if object was found
+                print("Could not find an lsys w/ name/number '{}'".format(param))
 
             else:
-                print("Using an lsys called {}.".format(obj.getName()))
+                print("Using the lsys called {}.".format(obj.getName()))
 
                 try:
-                    n = int(userIN.split(" ")[2])
-                    # int(input("How many iterations should be performed? "))
-                    turtleInit()
-                    print("Generating image. This may or may not take a while.")
+                    n = int(userIN[2])
+                    runLsys( obj, n, size )
 
-                    try:
-                        runLsys( obj, n, size )
-                        update()
-                        toSave = input("Image Generated. Would you like to save it? (y/n) ").lower()
-                        if toSave == "y":
-                            ts = getscreen().getcanvas()
-                            name = "{}_{}_{}.svg".format(obj.getName(), str(n), str( datetime.date.today() ))
-                            canvasvg.saveall( name, ts)     # Save as svg
-                            #ts.postscript(file=name)        # Save as eps (Does not save entire image)
-
-                            print("Saved image w/ name: {}".format(name))
-                        else:
-                            print("Exited turtle w/o saving image. Done.")
-
-                    except RecursionError:
-                        print("A Stack Overflow occurred; try again w/ fewer iterations.")
                 except ValueError:
                     print("Error: The number of iterations must be a non-negative integer. Aborting...")
                 except IndexError:
                     print("Error: # of iterations not given. Usage: 'run [lsys_name/num] [#_of_iterations]'")
+                except t.Terminator:
+                    # NOTE: Turtle raises error if canvas is closed, dunno what the issue is
+                    # Fuck it, do it again - it works
+                    runLsys( obj, n, size )
 
+        elif cmdTerm == 'runthru' or cmdTerm == 'rt':
+            obj = getLsysFromCollection( lsysCollection, param )
+
+            if obj == None:         # Check if object was found
+                print("Could not find an lsys w/ name/number '{}'".format(param))
+
+            else:
+                print("Using the lsys called {}.".format(obj.getName()))
+                try:
+                    for i in range( int(userIN[2]), int(userIN[3]) ):
+                        runLsys( obj, i, size )
+                        if input("ENTER to continue. 'X' to quit.").upper() == "X":
+                            break
+
+                except ValueError:
+                    print("Error: Invalid params for runthru range. Params must be integers.")
+
+        elif cmdTerm == 'save' or cmdTerm == 's':
+            try:
+                ts = t.getscreen().getcanvas()
+                dir = os.path.dirname(__file__)
+                filename = "images/{}_{}_{}.svg".format(obj.getName(), str(n), str( datetime.date.today()))
+
+                canvasvg.saveall( os.path.join( dir, filename ), ts)     # Save as svg
+            except NameError:
+                print("The canvasvg module was not imported. You must install it to save images. \
+                    Run 'pip install canvasvg'")
+            except t.Terminator:
+                print("The turtle canvas must be open to save the image. You must re-run your command to save.")
+
+        elif cmdTerm == 'load' or cmdTerm == 'l':
+            if param == None:
+                print( "Invalid use of 'load'. Usage \'load [filename]\'" )
+            else:
+                try:
+                    lsysCollection += getLsysFromFile( param )
+                    print("Sucessfully loaded: {}. \
+                        Use 'display' to see the updated list of lsys objects.".format( param ))
+                except FileNotFoundError:
+                    print("Error: File was not found: {}.".format( param ) )
+                except IndexError:
+                    print("Error: Invalid syntax in datafile.")
 
         elif cmdTerm == 'exit' or cmdTerm == 'quit' or cmdTerm == 'q':
             exit()
+
+        elif cmdTerm == '':
+            pass
 
         else:
             print("Unknown command: {}".format(cmdTerm) )
