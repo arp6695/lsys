@@ -21,7 +21,7 @@ Following commands are:
     'display'                           -   Print all currently loaded lsys objects
     'run [lsys_name]'                   -   Run recursions on a loaded lsys object, uses python's turtle
     'runthru [lsys_name] [first_itr] [final_itr]'   -   Run a sequence of recursions on a lsys object
-    'mod [lsys_name] [lsys_attr] [new_attr_val]'    -   Temporarily change a field of an lsys, (angle, axiom, or name)
+    'mod [lsys_name] [lsys_attr] [new_attr_val]'    -   Modify a field of an lsys (angle or axiom)
     'dump'                              -   Unload all currently loaded lsys objects
     'color [color_name]'                -   Change the color of the turtle's pen
     'size [int]'                        -   Change the size of the picture (3 by default)
@@ -75,8 +75,7 @@ def chooseAction( token, size, angle ):
 
     # Stack related
     elif token == "[":
-        data = tuple( [t.position(), t.heading()] )
-        STACK.push( data )
+        STACK.push( tuple( [t.position(), t.heading()] ) )
     elif token == "]":
         tpl = STACK.pop()
         t.penup()
@@ -130,7 +129,7 @@ def runLsysHelper( string, l, n, s ):
         if n <= 0 or char not in l.getRuleset().keys():
             chooseAction( char, s, l.getAngle() )
         else:
-            runLsysHelper( l.transformRule( char ), l, n-1, s )
+            runLsysHelper( l.getRule( char ), l, n-1, s )
     return None
 
 def printCollection( lst ):
@@ -218,7 +217,14 @@ def main():
             printHelp()
 
         elif cmdTerm == 'display' or cmdTerm == 'd':
-            printCollection( lsysCollection )
+            if param == None:
+                printCollection( lsysCollection )
+            else:
+                l = getLsysFromCollection( lsysCollection, param )
+                if l == None:
+                    print("No such lsys object is loaded.")
+                else:
+                    print( l )
 
         elif cmdTerm == 'size' or cmdTerm == 's':
             if not param.isdigit():
@@ -299,9 +305,25 @@ def main():
         elif cmdTerm == 'dump':
             if input("Are you sure you'd like to dump currently loaded collection? (y/n) ").lower() == "y":
                 lsysCollection = list()
+                print("Done.")
 
         elif cmdTerm == 'mod' or cmdTerm == 'm':
-            pass
+            l = getLsysFromCollection( lsysCollection, param )
+            try:
+                attr = userIN[2].lower()
+                if attr == 'angle':
+                    l.setAngle( int(userIN[3]) )
+                elif attr == 'axiom':
+                    l.setAxiom( userIN[3] )
+
+                print("Set the {} of {} to be {}".format( attr, l.getName(), userIN[3] ))
+            except ValueError:
+                print("Error: Invalid attribute value. Attribute value must be integer for angle.")
+            except IndexError:
+                print("Error: Invalid number of arguments. Usage 'mod [lsys_name] [lsys_attr] [new_attr_val]'")
+            except AttributeError:
+                # getLsysFromCollection returned None
+                print("Error: No lsys objects are currently loaded.")
 
         elif cmdTerm == '':
             pass

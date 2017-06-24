@@ -64,12 +64,12 @@ class lsys( object ):
         self.angle = angle
         self.axiom = axiom
         self.ruleset = ruleset
-        self.alphabet = genAlphabet()
+        self.alphabet = self.genAlphabet()
 
     def __repr__( self ):
         """ Create and return the string representation of an lsys object """
         result = "Name: {0}\nAlphabet: {1}\nAxiom: {2}\nRules: {3}\nAngle: {4} degrees\n"
-        return result.format( self.name, self.alphabet, self.axiom, self.ruleset, self.angle )
+        return result.format( self.name, self.getAlphabet(), self.axiom, self.ruleset, self.angle )
 
     def to_CSV_String( self ):
         """ Return String representation of self (file writeable) """
@@ -110,6 +110,9 @@ class lsys( object ):
 
     def setRuleset( self, ruleset ):
         self.ruleset = ruleset
+
+    def getRule( self, symbol ):
+        return self.ruleset[symbol]
 
     def getName(self):
         return self.name
