@@ -1,8 +1,12 @@
 'lsys' by Alex Piazza
 Following commands are:
-    'load [filename]'			-	Read and parse lsys objects from a given data file (example files exist in src/data/)
-    'display'				-	Print all currently loaded lsys objects
-    'run [lsys name or number] [int]'	-	Recursivly draw the given lsys w/ a given number of iterations
-    'help'				-	Display this screen
-    'size [int]'			-	Change the size of the picture (1 by default)
-    'exit' or 'quit'			-	Quit the program
+	'load [filename]'			-	Read and parse lsys objects from a given data file (example files in src/data/)
+	'display'				-	Print all currently loaded lsys objects
+	'run [lsys_name] [int]'			-	Recursivly draw the given lsys w/ a given number of iterations
+	'runthru [lsys_name] [itr_1] [itr_2]'	-	Run a sequence of recursion on an lsys, from itr_1 to itr_2 
+	'mod [lsys_name] [attr] [new_val]'	-	Temporarily change a field of an lsys, (angle, axiom, or name)
+	'dump'					-	Unload all currently loaded lsys objects
+	'size [int]'				-	Change the size of the picture (1 by default)
+	'color [color_name]'			-	Change the color of the turtle's pen
+	'help'					-	Display this screen
+	'exit' or 'quit'			-	Quit the program

@@ -7,26 +7,28 @@ Prompt to save the image (defaults to scalable vector img)
 Goto 1
 
 The alphabet has preset tokens that automatically correspond to turtle actions:
-    'A', 'B', 'C', 'X', 'Y', & 'Z' - Generic Constants - no turtle action
     'F' & 'G' - Forward by a given unit
     'L' - Leaf - Forward, w/ two 'leaves'
     '+' - Left by the lsys' angle
     '-' - Rigth by the lsys' angle
     '[' - Push tuple w/ turtle position and angle onto stack
     ']' - Pop tuple w/ turtle position and angle off of stack, apply turtle position & angle
+    Unlisted capital letters have no associated action (A, B, C, X, Y, Z are conevention).
 
 Following commands are:
     'load [file]' or 'l [file]'         -   Read and parse lsys objects from a given data file
                                             (example files exist in src/data/)
-    'display' or 'd'                    -   Print all currently loaded lsys objects
-    'run [lsys name]'                   -   Run recursions on a loaded lsys object, uses python's turtle
+    'display'                           -   Print all currently loaded lsys objects
+    'run [lsys_name]'                   -   Run recursions on a loaded lsys object, uses python's turtle
+    'runthru [lsys_name] [first_itr] [final_itr]'   -   Run a sequence of recursions on a lsys object
+    'mod [lsys_name] [lsys_attr] [new_attr_val]'    -   Temporarily change a field of an lsys, (angle, axiom, or name)
+    'dump'                              -   Unload all currently loaded lsys objects
+    'color [color_name]'                -   Change the color of the turtle's pen
+    'size [int]'                        -   Change the size of the picture (3 by default)
     'help'                              -   Print this help screen
-    'size [int]' or 's [int]'           -   Change the size of the picture (1 by default)
-    'exit' or 'quit' or 'q'             -   Quit the program
+    'exit' or 'quit'                    -   Quit the program
 
 TODO: Enable stochasticism (redo [slightly] the parsing, allow for variability)
-TODO: Add runthru (run recursion for specified range), e.g. 'runthru 10 0 5')
-    Syntax = 'runthru [lsys_name/num] [beginning_int] [ending_int]'
 """
 
 import sys                  # For Command Line Arguments
@@ -53,13 +55,13 @@ def turtleInit():
     t.setworldcoordinates( -300, -300, 300, 300 ) # NOTE: This may cause problems on different resolutions
     t.reset()
 
-def chooseAction( token, size, angle=0 ):
+def chooseAction( token, size, angle ):
     """
     Determine which turtle action to use.
     Helper for recursive turtle implementation
-    param: token - a string, token from lsys alphabet
-    param: size - an integer, the length the turtle will go forward
-    param: angle - an integer, the angle associated with the lsys
+    token - a string, token from lsys alphabet
+    size - an integer, the length the turtle will go forward
+    angle - an integer, the angle associated with the lsys
     """
     global STACK
 
@@ -119,6 +121,10 @@ def runLsys( l, n, s ):
 def runLsysHelper( string, l, n, s ):
     """
     Recursive Helper for 'runLsys'
+    string - a string to which the rules will be applied
+    l - an lsys object
+    n - an integer, number of recursions
+    s - an integer, unit size of turtle
     """
     for char in string:
         if n <= 0 or char not in l.getRuleset().keys():
@@ -176,7 +182,7 @@ def getLsysFromCollection( lst, param ):
     return obj
 
 def main():
-    size = 2
+    size = 3
     color = "black"
 
     # Initialization: check for loadable file
@@ -289,6 +295,13 @@ def main():
 
         elif cmdTerm == 'exit' or cmdTerm == 'quit' or cmdTerm == 'q':
             exit()
+
+        elif cmdTerm == 'dump':
+            if input("Are you sure you'd like to dump currently loaded collection? (y/n) ").lower() == "y":
+                lsysCollection = list()
+
+        elif cmdTerm == 'mod' or cmdTerm == 'm':
+            pass
 
         elif cmdTerm == '':
             pass

@@ -34,7 +34,7 @@ def getLsysFromString( string ):
 
     # Remove '{', '}', ';' and ' ' (space) from the ends of the string
     # Split string by comma
-    tokens = string.strip("\{\}; ").replace(" ", "").split(",")
+    tokens = string.strip("\{\} ").split(",")
 
     #print("Split the line {} into tokens {}".format(string, tokens))
 
@@ -49,8 +49,6 @@ def getLsysFromString( string ):
     result.setAngle( int(tokens[1]) )
     result.setAxiom( tokens[2] )
     result.setRuleset( ruleset )
-
-    #print("Parsed an lsys object:\n" + str(result) )
     return result
 
 def getLsysFromFile( filename ):
@@ -59,8 +57,12 @@ def getLsysFromFile( filename ):
     result = []
     for line in open(filename):
         for string in line.split(";"):
-            if not string.isspace():
-                result.append( getLsysFromString( string ) )
+            string = string.replace(" ", "").replace("\t", "")
+            try:
+                if not string.isspace() and not string[0] == '#':
+                    result.append( getLsysFromString( string ) )
+            except IndexError:
+                continue
     return result
 
 def writeToFile( filename, lst ):

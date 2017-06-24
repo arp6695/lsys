@@ -3,28 +3,32 @@ Lindenmeyer System (lsys) class definition.
 By: Alex Piazza
 
 Lessons courtesy of Wikipedia https://en.wikipedia.org/wiki/L-system
-    An Alphabet:
-        A collection of symbols, in no particular order
+A Lindenmeyer system is a way of rewriting strings. The symbols within these strings
+change according to rules, and, when interpreted as commands to be executed by a turtle,
+produce fractal pictures.
 
-    A Symbol are string tokens, an are either:
-        A Constant: symbol that cannot be removed by the ruleset, only added
-        A Variable: symbol that can be changed by the ruleset
-        There's no hard and fast trait that defines these within an lsys alphabet
+    An Alphabet:
+        A collection of symbols that, with the ruleset, collectivly comprise the L-System
+
+    A Symbol is a string token, and are either:
+        A Constant: symbol which is not mapped to any string by the ruleset, and is therefore never changed once created
+        A Variable: symbol which is mapped to a
+        There's no hard and fast trait that defines these within this L-System alphabet.
+        Symbols are constant or vary by convention; this nature is not specified in this system.
 
     An Axiom: A symbol or string of symbols that represents the initial state of the system
 
     Ruleset: 'rules' describing how symbols change from iteration to iteration.
     Specficially, this will be represented by a dictionary with the following key/val pairs:
-        <variable, string>
-        Where 'variable' is a variable symbol and 'string' is a Python defined string of
-        other variables and/or constants
+        <symbol, string>
+        Where 'symbol' is a variable symbol and 'string' is a string of symbols, consisting of
+        the variables and constants to replace 'symbol'.
 
-    An Angle (Optional):
-        The default angle that the turtle should turn; optional
-
-    Each 'rule' in the list will be applied to the Axiom (or subsequent iteration) one
-    after another. Therefore, the priority of the rules will be set by their respective
-list indecies. Conflicting rules will be addressed in this way.
+    An Angle:
+        The default angle that the turtle should turn
+        Expressed by an integer value 0-360, interpreted as degrees
+        NOTE: I've seen lsys' angles be expressed as a divisor of 360
+            e.g. If the lsys angle = 6, then the angle which turtle will turn is 360/6 = 60 degrees
 
 """
 
@@ -32,25 +36,20 @@ class lsys( object ):
     """
     An 'lsys' object represents and L-System.
     It has:
-        An Alphabet, of constants and variables
+        A Name
+        An Angle
         An Axiom
         A Ruleset
-        An angle (optional)
-    (See above docstring for more details.)
+        An Alphabet, of constants and variables
     """
 
-    def __init__( self, alphabet, axiom, ruleset, name, angle=0 ):
+    def __init__( self, name, angle, axiom, ruleset ):
         """
         Constructor for the lsys object
         """
 
-        if not isinstance(alphabet, list):
-            raise IOError("Alphabet must be a List of Strings")
-
         if not isinstance(axiom, str):
             raise IOError("Axiom must be a string.")
-            if axiom not in alphabet:
-                raise IOError("Axiom must be a part of the alphabet.")
 
         if not isinstance(ruleset, dict):
             raise IOError("Ruleset must be a dictionary.")
@@ -61,11 +60,11 @@ class lsys( object ):
         if not isinstance(name, str):
             raise IOError("Name must be a string")
 
-        self.alphabet = alphabet
+        self.name = name
+        self.angle = angle
         self.axiom = axiom
         self.ruleset = ruleset
-        self.angle = angle
-        self.name = name
+        self.alphabet = genAlphabet()
 
     def __repr__( self ):
         """ Create and return the string representation of an lsys object """
@@ -75,10 +74,10 @@ class lsys( object ):
     def to_CSV_String( self ):
         """ Return String representation of self (file writeable) """
 
-        alphabetSTR = "({})".format( str(self.alphabet).replace( "\'", "" ))
-        axiomSTR = "({})".format( self.axiom )
-        angleSTR = "({})".format( self.angle )
+        #alphabetSTR = "({})".format( str(self.alphabet).replace( "\'", "" ))
         nameSTR = "({})".format( self.name )
+        angleSTR = "({})".format( self.angle )
+        axiomSTR = "({})".format( self.axiom )
 
         rulesetSTR = ""
         for key in self.ruleset.keys():
@@ -88,10 +87,6 @@ class lsys( object ):
         return "{ {0}, {1}, {2}, {3}, {4} };".format( nameSTR, angleSTR, axiomSTR, rulesetSTR )
 
     ## Getters & Setters ##
-
-    def transformRule( self, token ):
-        """ Return the transformed string given a token from the ruleset. """
-        return self.ruleset[token]
 
     def addRule( self, old, new ):
         """ Add a rule to the lsys ruleset """
@@ -126,21 +121,33 @@ class lsys( object ):
         return self.axiom
 
     def getAlphabet(self):
-        # TODO 'import copy' and return a deepcopy instead
-        return self.alphabet
+        if len(self.alphabet) == 0:
+            self.alphabet = self.genAlphabet()
+        else:
+            return self.alphabet
 
     def getRuleset(self):
-        # TODO 'import copy' and return a deepcopy instead
         return self.ruleset
+
+    def genAlphabet(self):
+        """ Create and return the alphabet of this lsys"""
+        result = []
+        for key in self.ruleset.keys():
+            if key not in result:
+                result.append(key)
+            for val in self.ruleset[key]:
+                if val not in result:
+                    result.append(val)
+        return result
 
 def createLsys():
     """ Create and return an lsys with default params """
-    return lsys( list(), str(), dict(), "default_name", 0 )
+    return lsys( "default_name", 0, str(), dict() )
 
-def genStringItr( l, n ):
+def genString( l, n ):
     """
     Generate a symbol string that can be read and interpreted as turtle commands
-    Iterative, see main.py for the recursive version, entitled: "runLsys"
+    Iterative, see main.py for the recursive version, entitled: 'runLsys'
     """
 
     if not isinstance( l, lsys ):
@@ -150,7 +157,7 @@ def genStringItr( l, n ):
 
     string = l.getAxiom()
     result = string
-    for i in range(0,n):
+    for i in range( n ):
         for char in string:
             result += l.getRuleset()[char]
         string = result
