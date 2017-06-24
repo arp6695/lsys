@@ -24,11 +24,11 @@ Following commands are:
     'mod [lsys_name] [lsys_attr] [new_attr_val]'    -   Modify a field of an lsys (angle or axiom)
     'dump'                              -   Unload all currently loaded lsys objects
     'color [color_name]'                -   Change the color of the turtle's pen
-    'size [int]'                        -   Change the size of the picture (3 by default)
+    'size [int]'                        -   Change the size of the picture (5 by default)
     'help'                              -   Print this help screen
     'exit' or 'quit'                    -   Quit the program
 
-TODO: Enable stochasticism (redo [slightly] the parsing, allow for variability)
+TODO: Implement stochasticism (redo the parsing [slightly], allow for variability)
 """
 
 import sys                  # For Command Line Arguments
@@ -104,6 +104,11 @@ def runLsys( l, n, s ):
     s - an integer, unit size of turtle
     """
 
+    # Clear stack, failsafe against unbalanced lsys
+    global STACK
+    if not STACK.isEmpty():
+        STACK = getStack()
+
     turtleInit()
     print("The image is being generated. This may or may not take a while.")
 
@@ -144,7 +149,7 @@ def printCollection( lst ):
 
 def printHelp():
     """ Print Help: read help.txt """
-    for line in open( os.path.join( os.path.dirname(__file__), "/misc/help.txt" )):
+    for line in open( os.path.join( os.path.dirname(__file__), "misc/help.txt" )):
         print(line, end="")
 
 def loadLsysFromFile( filename ):
@@ -181,7 +186,7 @@ def getLsysFromCollection( lst, param ):
     return obj
 
 def main():
-    size = 3
+    size = 5
     color = "black"
 
     # Initialization: check for loadable file
@@ -252,7 +257,7 @@ def main():
                 except IndexError:
                     print("Error: # of iterations not given. Usage: 'run [lsys_name/num] [#_of_iterations]'")
                 except t.Terminator:
-                    # NOTE: Turtle raises error if canvas is closed, dunno what the issue is
+                    # NOTE: Turtle raises error if canvas is closed,
                     # Fuck it, do it again - it works
                     runLsys( obj, n, size )
 

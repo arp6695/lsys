@@ -27,5 +27,6 @@
 { TriGrid, 60, X, F->, X->FY[+FY][--FY]FY, Y->FX[++FX][-FX]FX };
 { HexGrid, 60, F, F->-F+F+G[+F+F]-, G->GG }
 { Penrose, 36, [X]++[X]++[X]++[X]++[X], V->, W->YV++ZV----XV[-YV----WV]++, X->+YV--ZV[---WV--XV]+, Y->-WV++XV[+++YV++ZV]-, Z->--YV++++WV[+ZV++++XV]--XV }
+{ SpokeTri, 30, W, W->+++X--F--ZFX+, X->---W++F++YFW-, Y->+ZFX--F--Z+++, Z->-YFW++F++Y--- }
 # { Fass, 90,  };
 #{ WeedFractal, 7.2, +++++++++++++X, X-> }; # http://www.nahee.com/spanky/www/fractint/lsys/plants.html
