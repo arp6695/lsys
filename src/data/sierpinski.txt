@@ -1,0 +1,4 @@
+{ SierTri, 120, F-G-G, F->F-G+F+G-F, G->GG };
+{ SierTriApprox, 60, F, F->+G-F-G+, G->-F+G+F- };
+{ SierCarpet, 90, F, F->F+F-F-F-G+F+F+F-F, G->GGG };
+{ SierCurve, 45, A--F--A--F, A->+B-F-B+, B->-A+F+A- };

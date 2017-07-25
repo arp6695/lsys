@@ -16,17 +16,16 @@ The alphabet has preset tokens that automatically correspond to turtle actions:
     Unlisted capital letters have no associated action (A, B, C, X, Y, Z are conevention).
 
 Following commands are:
-    'load [file]' or 'l [file]'         -   Read and parse lsys objects from a given data file
-                                            (example files exist in src/data/)
-    'display'                           -   Print all currently loaded lsys objects
-    'run [lsys_name]'                   -   Run recursions on a loaded lsys object, uses python's turtle
+    'load [file]' or 'l [file]'                     -   Read and parse lsys objects from a given data file
+    'display'                                       -   Print all currently loaded lsys objects
+    'run [lsys_name]'                               -   Run recursions on a loaded lsys object, uses python's turtle
     'runthru [lsys_name] [first_itr] [final_itr]'   -   Run a sequence of recursions on a lsys object
     'mod [lsys_name] [lsys_attr] [new_attr_val]'    -   Modify a field of an lsys (angle or axiom)
-    'dump'                              -   Unload all currently loaded lsys objects
-    'color [color_name]'                -   Change the color of the turtle's pen
-    'size [int]'                        -   Change the size of the picture (5 by default)
-    'help'                              -   Print this help screen
-    'exit' or 'quit'                    -   Quit the program
+    'dump'                                          -   Unload all currently loaded lsys objects
+    'color [color_name]'                            -   Change the color of the turtle's pen
+    'size [int]'                                    -   Change the size of the picture (5 by default)
+    'help'                                          -   Print this help screen
+    'exit' or 'quit'                                -   Quit the program
 
 TODO: Implement stochasticism (redo the parsing [slightly], allow for variability)
 """
@@ -45,6 +44,7 @@ except ImportError:
     print("Error: Could not import canvasvg. You will be unable to save images. \
         Use 'pip install canvasvg' to intall the module.")
 
+# Global Stack (for saving turtle position and heading between function calls)
 STACK = getStack()
 
 def turtleInit():
@@ -94,6 +94,11 @@ def chooseAction( token, size, angle ):
         t.backward(size/4)
         t.lt(45)
 
+    # Color related (Token passed will be a hex string)
+    if len(token) > 1:
+        if token[0] == "#":
+            t.color( "#{}".format(token[1:]) )
+
     return None
 
 def runLsys( l, n, s ):
@@ -130,8 +135,12 @@ def runLsysHelper( string, l, n, s ):
     n - an integer, number of recursions
     s - an integer, unit size of turtle
     """
-    for char in string:
-        if n <= 0 or char not in l.getRuleset().keys():
+    for i in range(len(string)):
+        char = string[i]
+        if char is "#":
+            chooseAction( string[i:i+7], s, l.getAngle() )
+            i += 6
+        elif n <= 0 or char not in l.getRuleset().keys():
             chooseAction( char, s, l.getAngle() )
         else:
             runLsysHelper( l.getRule( char ), l, n-1, s )

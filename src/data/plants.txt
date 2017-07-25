@@ -1,0 +1,5 @@
+{ FractalTree, 45, L, F->FF, L-> F[+L]-L };
+{ FractalPlant, 25, X, X->F[-X][X]F[-X]+FX, F->FF };
+{ BushPlant, 22, F, F->FF-[-F+F+F]+[+F-F-F]};
+{ TreePlant, 25, FG, F->FF-[-F+F]+[+F-F], G->FF+[+F]+[-F]};
+{ VinePlant, 27, F, F->FF[-F++F][+F--F]++F--F };

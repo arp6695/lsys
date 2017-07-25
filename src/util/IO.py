@@ -49,6 +49,8 @@ def getLsysFromString( string ):
     result.setAngle( int(tokens[1]) )
     result.setAxiom( tokens[2] )
     result.setRuleset( ruleset )
+#    print( "Got a result " + str(result) )
+
     return result
 
 def getLsysFromFile( filename ):
