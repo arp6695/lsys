@@ -29,4 +29,5 @@
 { Penrose, 36, [X]++[X]++[X]++[X]++[X], V->, W->YV++ZV----XV[-YV----WV]++, X->+YV--ZV[---WV--XV]+, Y->-WV++XV[+++YV++ZV]-, Z->--YV++++WV[+ZV++++XV]--XV }
 { SpokeTri, 30, W, W->+++X--F--ZFX+, X->---W++F++YFW-, Y->+ZFX--F--Z+++, Z->-YFW++F++Y--- }
 # { Fass, 90,  };
-#{ WeedFractal, 7.2, +++++++++++++X, X-> }; # http://www.nahee.com/spanky/www/fractint/lsys/plants.html
+#{ WeedFractal, 7.2, +++++++++++++X, X->f[@.5+++++++++x]-f[@.4-----------x]@.6x }; # http://www.nahee.com/spanky/www/fractint/lsys/plants.html
+#  { Alien, 360/11, X, F -> , X -> [@q2@I2-fx]g[@q2@I2---fx] }

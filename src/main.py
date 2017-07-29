@@ -7,12 +7,14 @@ Prompt to save the image (defaults to scalable vector img)
 Goto 1
 
 The alphabet has preset tokens that automatically correspond to turtle actions:
-    'F' & 'G' - Forward by a given unit
+    'F' 'G' 'H' 'I' 'J' - Forward by a given unit (Draw)
+    'K' - Forward by a given unit (Does not Draw)
     'L' - Leaf - Forward, w/ two 'leaves'
     '+' - Left by the lsys' angle
     '-' - Rigth by the lsys' angle
     '[' - Push tuple w/ turtle position and angle onto stack
     ']' - Pop tuple w/ turtle position and angle off of stack, apply turtle position & angle
+    '#' - Change the color of the pen; MUST be followed by a six digit hex string, which indicates the color
     Unlisted capital letters have no associated action (A, B, C, X, Y, Z are conevention).
 
 Following commands are:
@@ -22,7 +24,6 @@ Following commands are:
     'runthru [lsys_name] [first_itr] [final_itr]'   -   Run a sequence of recursions on a lsys object
     'mod [lsys_name] [lsys_attr] [new_attr_val]'    -   Modify a field of an lsys (angle or axiom)
     'dump'                                          -   Unload all currently loaded lsys objects
-    'color [color_name]'                            -   Change the color of the turtle's pen
     'size [int]'                                    -   Change the size of the picture (5 by default)
     'help'                                          -   Print this help screen
     'exit' or 'quit'                                -   Quit the program
@@ -31,21 +32,29 @@ TODO: Implement stochasticism (redo the parsing [slightly], allow for variabilit
 """
 
 import sys                  # For Command Line Arguments
-import os                   # For determining the current directory (image saving)
+import os                   # For determining the current directory (image saving & file loading)
 import datetime             # For naming images
 import turtle as t          # For Drawing
+import math                 # For additional
 
 from util.IO import *       # For Reading/Writing lsys to/from files
 from util.Stack import *    # For Stack support
 
 try:
-    import canvasvg         # For saving images; NOTE: This is a non-standard module -> 'pip install canvasvg'
+    import canvasvg         # For saving images; NOTE: I believe this is a non-standard module
 except ImportError:
-    print("Error: Could not import canvasvg. You will be unable to save images. \
-        Use 'pip install canvasvg' to intall the module.")
+    print("Warning: Could not import 'canvasvg'. You will be unable to save images.")
 
-# Global Stack (for saving turtle position and heading between function calls)
+try:
+    import numpy            # For choosing symbol string with weighted probabilities
+except ImportError:
+    print("Warning: Could not import 'numpy'. You will be unable to draw stochastic L-systems.")
+
+# Global Stack (for saving turtle position and heading between recursive function calls)
 STACK = getStack()
+
+# Global flag for whether or not left and right turns are reversed.
+ANGLE_REVERSE = False
 
 def turtleInit():
     """ Initialize the turtle module """
@@ -64,14 +73,15 @@ def chooseAction( token, size, angle ):
     angle - an integer, the angle associated with the lsys
     """
     global STACK
+    global ANGLE_REVERSE
 
     # Defaults
-    if token == "F" or token == "G":
+    if token in "FGHIJ":
         t.forward( size )
     elif token == "-":
-        t.right( angle )
+        t.left( angle ) if ANGLE_REVERSE else t.right( angle )
     elif token == "+":
-        t.left( angle )
+        t.right( angle ) if ANGLE_REVERSE else t.left( angle )
 
     # Stack related
     elif token == "[":
@@ -94,10 +104,9 @@ def chooseAction( token, size, angle ):
         t.backward(size/4)
         t.lt(45)
 
-    # Color related (Token passed will be a hex string)
     if len(token) > 1:
         if token[0] == "#":
-            t.color( "#{}".format(token[1:]) )
+            t.color( token )
 
     return None
 
@@ -114,6 +123,9 @@ def runLsys( l, n, s ):
     if not STACK.isEmpty():
         STACK = getStack()
 
+    global ANGLE_REVERSE
+    ANGLE_REVERSE = False
+
     turtleInit()
     print("The image is being generated. This may or may not take a while.")
 
@@ -127,23 +139,56 @@ def runLsys( l, n, s ):
         print("A Stack Overflow Error occurred; try again w/ fewer iterations.")
         return
 
-def runLsysHelper( string, l, n, s ):
+def runLsysHelper( string, l, depth, size ):
     """
     Recursive Helper for 'runLsys'
     string - a string to which the rules will be applied
     l - an lsys object
-    n - an integer, number of recursions
-    s - an integer, unit size of turtle
+    depth - an integer, number of recursions
+    size - an integer, unit size of turtle
     """
+
+    global ANGLE_REVERSE
+
+    size_multiplier = 1
+
     for i in range(len(string)):
         char = string[i]
+
+        # Must pass the hex string (in its entirety) as a token
         if char is "#":
-            chooseAction( string[i:i+7], s, l.getAngle() )
+            chooseAction( string[i:i+7], size * size_multiplier, l.getAngle())
             i += 6
-        elif n <= 0 or char not in l.getRuleset().keys():
-            chooseAction( char, s, l.getAngle() )
+
+        # Modify size multiplier by reading remaining string
+        elif char is "@":
+            s = ""
+            i += 1
+
+            while string[i].upper() in "1234567890.QI":
+                s += string[i]
+                i += 1
+
+            if s[0].upper() == "Q":
+                size_multiplier = math.sqrt( float(s[1:]) )
+            elif s[0].upper() == "I":
+                size_multiplier = 1 / float(s[1:])
+            else:
+                size_multiplier = float( s[0:] )
+
+        elif char is "!":
+            ANGLE_REVERSE = not ANGLE_REVERSE
+
+        # Character must correspond to some executable action
+        elif depth <= 0 or char not in l.getRuleset().keys():
+            chooseAction( char, size * size_multiplier, l.getAngle() )
+
+        # Otherwise recurse with a rule string
         else:
-            runLsysHelper( l.getRule( char ), l, n-1, s )
+            s = numpy.random.choice( l.getRule( char )[0], 1, True, l.getRule( char )[1] ).tolist()[0]
+            runLsysHelper( s, l, depth-1, size * size_multiplier )
+
+
     return None
 
 def printCollection( lst ):
@@ -173,13 +218,16 @@ def loadLsysFromFile( filename ):
         return lst
     except FileNotFoundError:
         print("Error: File was not found: {}".format( filename ) )
+
     except IndexError:
         print("Error: Invalid syntax in datafile.")
     except ValueError:
         print("Error: Invalid syntax in datafile.")
+
     return lst
 
 def getLsysFromCollection( lst, param ):
+
     obj = None
 
     if param.isdigit():     # Allow user to select lsys by number in collection
@@ -189,14 +237,14 @@ def getLsysFromCollection( lst, param ):
             obj = None
 
     else:                   # Allow user to select lsys by name
-        for l in lsysCollection:
-            if l.getName() == param:
+        for l in lst:
+            if l.getName().lower() == param.lower():
                 obj = l
     return obj
 
 def main():
+
     size = 5
-    color = "black"
 
     # Initialization: check for loadable file
     print( "Hello. Welcome to lsys." )
@@ -205,7 +253,7 @@ def main():
         # NOTE: command line filename will be relative to shell, not file
         lsysCollection = loadLsysFromFile( filename )
     else:
-        lsysCollection = list()
+        lsysCollection = []
         print( "No file was loaded. Use 'load [filename]' to parse a file for lsys objects." )
 
     # User input loop
@@ -219,15 +267,7 @@ def main():
         else:
             param = None
 
-        # Determine what should be done w/ the command term and param
-        if cmdTerm == 'color' or cmdTerm == 'c':
-            try:
-                # NOTE: This doesnt work, dunno why
-                t.color(param)
-            except t.TurtleGraphicsError:
-                print("Error: '{}' is not a valid color for the turtle.".format(param))
-
-        elif cmdTerm == 'help' or cmdTerm == 'h':
+        if cmdTerm == 'help' or cmdTerm == 'h':
             printHelp()
 
         elif cmdTerm == 'display' or cmdTerm == 'd':
@@ -266,8 +306,8 @@ def main():
                 except IndexError:
                     print("Error: # of iterations not given. Usage: 'run [lsys_name/num] [#_of_iterations]'")
                 except t.Terminator:
-                    # NOTE: Turtle raises error if canvas is closed,
-                    # Fuck it, do it again - it works
+                    # NOTE Don't touch this; program will crash on closing turtle window NOTE
+                    # Fuck it, run it again - it seems to work
                     runLsys( obj, n, size )
 
         elif cmdTerm == 'runthru' or cmdTerm == 'rt':

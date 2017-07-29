@@ -54,8 +54,8 @@ class lsys( object ):
         if not isinstance(ruleset, dict):
             raise IOError("Ruleset must be a dictionary.")
 
-        if not isinstance(angle, int):
-            raise IOError("Angle must be an integer")
+        if not isinstance(angle, float) and not isinstance(angle, int):
+            raise IOError("Angle must be an float")
 
         if not isinstance(name, str):
             raise IOError("Name must be a string")
@@ -94,7 +94,7 @@ class lsys( object ):
         self.ruleset[old] = new
 
     def setAngle( self, angle ):
-        assert isinstance( angle, int )
+        assert isinstance( angle, float )
         self.angle = angle
 
     def setAlphabet( self, alphabet ):
