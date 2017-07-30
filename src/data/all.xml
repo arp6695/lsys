@@ -3,22 +3,22 @@
 <data>
 
     <lsys>
-      <name>DragonCurve</name>
-      <angle>90</angle>
-      <axiom>FX</axiom>
+      <name> DragonCurve </name>
+      <angle> 90 </angle>
+      <axiom> FX </axiom>
       <rule>
-        <var>   X  </var>
+        <var>  X </var>
         <case>
-          <prob>  1  </prob>
-          <result>  X+YF+  </result>
+          <prob> 1 </prob>
+          <result> X+YF+ </result>
         </case>
       </rule>
 
       <rule>
-        <var>   Y  </var>
+        <var> Y </var>
         <case>
-          <prob>  1  </prob>
-          <result>  -FX-Y  </result>
+          <prob> 1 </prob>
+          <result> -FX-Y </result>
         </case>
       </rule>
     </lsys>

@@ -95,11 +95,11 @@ def getLsysFromFile( filename ):
         # Iterate thru all lsys data fields
         for lsys_field in child:
             if lsys_field.tag == "name":
-                l.setName( lsys_field.text.replace(" ", "") )
+                l.name = lsys_field.text.replace(" ", "")
             elif lsys_field.tag == "angle":
-                    l.setAngle( float( fractions.Fraction( lsys_field.text ) ) )
+                    l.angle = float( fractions.Fraction( lsys_field.text ) )
             elif lsys_field.tag == "axiom":
-                l.setAxiom( lsys_field.text.replace(" ", "") )
+                l.axiom = lsys_field.text.replace(" ", "")
             elif lsys_field.tag == "rule":
                 value = ([],[])
                 key = None      # Must be initialized
@@ -121,7 +121,7 @@ def getLsysFromFile( filename ):
                 ruleset[key] = value
             else:
                 break
-        l.setRuleset( ruleset )
+        l.ruleset = ruleset
         result.append( l )
     return result
 
@@ -162,9 +162,9 @@ def getLsysFromString( string ):
         ruleset[fromString] = toString
 
     # Set all the fields of the lsys
-    result.setName( tokens[0] )
-    result.setAngle( int(tokens[1]) )
-    result.setAxiom( tokens[2] )
-    result.setRuleset( ruleset )
+    result.name = tokens[0]
+    result.angle = int(tokens[1])
+    result.axiom = tokens[2]
+    result.ruleset = ruleset
     print( "Got a result " + str(result) )
     return result

@@ -10,25 +10,27 @@ produce fractal pictures.
     An Alphabet:
         A collection of symbols that, with the ruleset, collectivly comprise the L-System
 
+    An Angle:
+        The default angle that the turtle should turn
+        Expressed by an float value 0-360, interpreted as degrees
+        NOTE: I've seen lsys' angles be expressed as a divisor of 360
+            e.g. If the lsys angle = 6, then the angle which turtle will turn is 360/6 degrees, or 60 degrees
+
     A Symbol is a string token, and are either:
         A Constant: symbol which is not mapped to any string by the ruleset, and is therefore never changed once created
         A Variable: symbol which is mapped to a
         There's no hard and fast trait that defines these within this L-System alphabet.
-        Symbols are constant or vary by convention; this nature is not specified in this system.
+        Symbols are constant or vary by convention; this distinction is not specified in this system.
 
     An Axiom: A symbol or string of symbols that represents the initial state of the system
 
     Ruleset: 'rules' describing how symbols change from iteration to iteration.
     Specficially, this will be represented by a dictionary with the following key/val pairs:
-        <symbol, string>
-        Where 'symbol' is a variable symbol and 'string' is a string of symbols, consisting of
-        the variables and constants to replace 'symbol'.
-
-    An Angle:
-        The default angle that the turtle should turn
-        Expressed by an integer value 0-360, interpreted as degrees
-        NOTE: I've seen lsys' angles be expressed as a divisor of 360
-            e.g. If the lsys angle = 6, then the angle which turtle will turn is 360/6 = 60 degrees
+        <symbol, tuple>
+        Where 'symbol' is a variable symbol and 'tuple' is a tuple of two lists:
+            the first list is a collection of every result string to which a given variable can map
+            the second list contains the weighted probabilities of each string
+                (ordering of this list corresponds to each variable in the previous list)
 
 """
 
@@ -68,69 +70,21 @@ class lsys( object ):
 
     def __repr__( self ):
         """ Create and return the string representation of an lsys object """
-        result = "Name: {0}\nAlphabet: {1}\nAxiom: {2}\nRules: {3}\nAngle: {4} degrees\n"
-        return result.format( self.name, self.getAlphabet(), self.axiom, self.ruleset, self.angle )
+        result = "Name: {0}\nAngle: degrees{1}\nAlphabet: {2}\nAxiom: {3}\nRules:\n{4}"
 
-    def to_CSV_String( self ):
-        """ Return String representation of self (file writeable) """
-
-        #alphabetSTR = "({})".format( str(self.alphabet).replace( "\'", "" ))
-        nameSTR = "({})".format( self.name )
-        angleSTR = "({})".format( self.angle )
-        axiomSTR = "({})".format( self.axiom )
-
-        rulesetSTR = ""
+        rule_string = ""
         for key in self.ruleset.keys():
-            rulesetSTR += "{}->{},".format( key, self.ruleset[key] )
-        rulesetSTR = "({})".format( rulesetSTR ).rstrip(",")
+            rule = self.ruleset[key]
 
-        return "{ {0}, {1}, {2}, {3}, {4} };".format( nameSTR, angleSTR, axiomSTR, rulesetSTR )
+            if len(rule[0]) > 1:
+                trans = ""
+                for i in range(len(rule[0])):
+                    trans += "\t({}%) {}\n".format( round(rule[1][i] * 100, 2), rule[0][i] )
+            else:
+                trans = "{}\n".format( rule[0][0] )
+            rule_string += " {} -> {}".format(key, trans)
 
-    ## Getters & Setters ##
-
-    def addRule( self, old, new ):
-        """ Add a rule to the lsys ruleset """
-        assert old not in self.ruleset.keys()
-        self.ruleset[old] = new
-
-    def setAngle( self, angle ):
-        assert isinstance( angle, float )
-        self.angle = angle
-
-    def setAlphabet( self, alphabet ):
-        assert isinstance( alphabet, list )
-        self.alphabet = alphabet
-
-    def setAxiom( self, axiom ):
-        assert isinstance( axiom, str )
-        self.axiom = axiom
-
-    def setName( self, name ):
-        self.name = name
-
-    def setRuleset( self, ruleset ):
-        self.ruleset = ruleset
-
-    def getRule( self, symbol ):
-        return self.ruleset[symbol]
-
-    def getName(self):
-        return self.name
-
-    def getAngle(self):
-        return self.angle
-
-    def getAxiom(self):
-        return self.axiom
-
-    def getAlphabet(self):
-        if len(self.alphabet) == 0:
-            self.alphabet = self.genAlphabet()
-        else:
-            return self.alphabet
-
-    def getRuleset(self):
-        return self.ruleset
+        return result.format( self.name, self.angle, self.alphabet, self.axiom, rule_string )
 
     def genAlphabet(self):
         """ Create and return the alphabet of this lsys"""
@@ -143,14 +97,19 @@ class lsys( object ):
                     result.append(val)
         return result
 
+    def isComplete(self):
+        """ Returns True if the lsys has valid and complete fields """
+        return len(self.name) > 0 and len(self.axiom) > 0 and len(self.ruleset) > 0 and self.angle is not 0
+
 def createLsys():
     """ Create and return an lsys with default params """
-    return lsys( "default_name", 0, str(), dict() )
+    return lsys( str(), int(), str(), dict() )
 
-def genString( l, n ):
+def genStringIter( l, n ):
     """
     Generate a symbol string that can be read and interpreted as turtle commands
     Iterative, see main.py for the recursive version, entitled: 'runLsys'
+    Takes a long time
     """
 
     if not isinstance( l, lsys ):
@@ -164,4 +123,19 @@ def genString( l, n ):
         for char in string:
             result += l.getRuleset()[char]
         string = result
+    return result
+
+def genStringRec( l, n ):
+    """ Returns a string using recursion """
+    return genStringRecHelper( l, l.axiom, n )
+
+def genStringRecHelper( l, s, n ):
+
+    result = ""
+
+    for char in s:
+        if n <= 0 or char not in l.ruleset.keys():
+            result += char
+        else:
+            result += genStringRecHelper( l, l.ruleset( char ), n-1 )
     return result

@@ -104,7 +104,10 @@ def chooseAction( token, size, angle ):
         t.backward(size/4)
         t.lt(45)
 
-    if len(token) > 1:
+    elif char is "!":
+        ANGLE_REVERSE = not ANGLE_REVERSE
+
+    elif len(token) > 1:
         if token[0] == "#":
             t.color( token )
 
@@ -130,7 +133,7 @@ def runLsys( l, n, s ):
     print("The image is being generated. This may or may not take a while.")
 
     try:
-        runLsysHelper( l.getAxiom(), l, n, s )
+        runLsysHelper( l.axiom(), l, n, s )
         t.hideturtle()
         t.update()
         print("Image generated. Use 'save' command to save the image to file.")
@@ -148,8 +151,6 @@ def runLsysHelper( string, l, depth, size ):
     size - an integer, unit size of turtle
     """
 
-    global ANGLE_REVERSE
-
     size_multiplier = 1
 
     for i in range(len(string)):
@@ -157,7 +158,7 @@ def runLsysHelper( string, l, depth, size ):
 
         # Must pass the hex string (in its entirety) as a token
         if char is "#":
-            chooseAction( string[i:i+7], size * size_multiplier, l.getAngle())
+            chooseAction( string[i:i+7], size * size_multiplier, l.angle)
             i += 6
 
         # Modify size multiplier by reading remaining string
@@ -176,30 +177,14 @@ def runLsysHelper( string, l, depth, size ):
             else:
                 size_multiplier = float( s[0:] )
 
-        elif char is "!":
-            ANGLE_REVERSE = not ANGLE_REVERSE
-
         # Character must correspond to some executable action
         elif depth <= 0 or char not in l.getRuleset().keys():
-            chooseAction( char, size * size_multiplier, l.getAngle() )
+            chooseAction( char, size * size_multiplier, l.angle )
 
         # Otherwise recurse with a rule string
         else:
-            s = numpy.random.choice( l.getRule( char )[0], 1, True, l.getRule( char )[1] ).tolist()[0]
+            s = numpy.random.choice( l.ruleset[char][0], 1, True, l.ruleset[char][1] ).tolist()[0]
             runLsysHelper( s, l, depth-1, size * size_multiplier )
-
-
-    return None
-
-def printCollection( lst ):
-    """ Print each lsys object in the given list. """
-
-    if len(lst) == 0:
-        print("No lsys objects have been loaded.")
-    else:
-        print("Currently loaded objects are:")
-        for i in range(len(lst)):
-            print( "{}. {}".format( str(i+1), lst[i].getName()) )
 
 def printHelp():
     """ Print Help: read help.txt """
@@ -238,9 +223,24 @@ def getLsysFromCollection( lst, param ):
 
     else:                   # Allow user to select lsys by name
         for l in lst:
-            if l.getName().lower() == param.lower():
+            if l.name.lower() == param.lower():
                 obj = l
     return obj
+
+def display( param, lst ):
+    if param == None:
+        if len(lst) == 0:
+            print("No lsys objects have been loaded.")
+        else:
+            print("Currently loaded objects are:")
+            for i in range(len(lst)):
+                print( "{}. {}".format( str(i+1), lst[i].name) )
+    else:
+        l = getLsysFromCollection( lst, param )
+        if l == None:
+            print("No such lsys object is loaded.")
+        else:
+            print( l )
 
 def main():
 
@@ -267,27 +267,20 @@ def main():
         else:
             param = None
 
-        if cmdTerm == 'help' or cmdTerm == 'h':
+        if 'help'.startswith( cmdTerm ):
             printHelp()
 
-        elif cmdTerm == 'display' or cmdTerm == 'd':
-            if param == None:
-                printCollection( lsysCollection )
-            else:
-                l = getLsysFromCollection( lsysCollection, param )
-                if l == None:
-                    print("No such lsys object is loaded.")
-                else:
-                    print( l )
+        elif 'display'.startswith( cmdTerm ):
+            display( param, lsysCollection )
 
-        elif cmdTerm == 'size' or cmdTerm == 's':
+        elif 'size'.startswith( cmdTerm ):
             if not param.isdigit():
                 print( "Invalid use of 'size'. Usage \'size [int]\'" )
             else:
                 size = int(param)
                 print( "Size has been set to {}.".format(size) )
 
-        elif cmdTerm == 'run' or cmdTerm == 'r':
+        elif 'run'.startswith( cmdTerm ):
 
             obj = getLsysFromCollection( lsysCollection, param )
 
@@ -295,7 +288,7 @@ def main():
                 print("Could not find an lsys w/ name/number '{}'".format(param))
 
             else:
-                print("Using the lsys called {}.".format(obj.getName()))
+                print("Using the lsys called {}.".format(obj.name))
 
                 try:
                     n = int(userIN[2])
@@ -310,14 +303,14 @@ def main():
                     # Fuck it, run it again - it seems to work
                     runLsys( obj, n, size )
 
-        elif cmdTerm == 'runthru' or cmdTerm == 'rt':
+        elif 'runthru'.startswith( cmdTerm ):
             obj = getLsysFromCollection( lsysCollection, param )
 
             if obj == None:         # Check if object was found
                 print("Could not find an lsys w/ name/number '{}'".format(param))
 
             else:
-                print("Using the lsys called {}.".format(obj.getName()))
+                print("Using the lsys called {}.".format(obj.name))
                 try:
                     for i in range( int(userIN[2]), int(userIN[3]) ):
                         runLsys( obj, i, size )
@@ -327,11 +320,11 @@ def main():
                 except ValueError:
                     print("Error: Invalid params for runthru range. Params must be integers.")
 
-        elif cmdTerm == 'save' or cmdTerm == 's':
+        elif 'save'.startswith( cmdTerm ):
             try:
                 ts = t.getscreen().getcanvas()
                 dir = os.path.dirname(__file__)
-                filename = "images/{}_{}_{}.svg".format(obj.getName(), str(n), str( datetime.date.today()))
+                filename = "images/{}_{}_{}.svg".format(obj.name, str(n), str( datetime.date.today()))
 
                 canvasvg.saveall( os.path.join( dir, filename ), ts)     # Save as svg
             except NameError:
@@ -340,7 +333,7 @@ def main():
             except t.Terminator:
                 print("The turtle canvas must be open to save the image. You must re-run your command to save.")
 
-        elif cmdTerm == 'load' or cmdTerm == 'l':
+        elif 'load'.startswith( cmdTerm ):
             if param == None:
                 print( "Invalid use of 'load'. Usage \'load [filename]\'" )
             else:
@@ -353,30 +346,29 @@ def main():
                 except IndexError:
                     print("Error: Invalid syntax in datafile.")
 
-        elif cmdTerm == 'exit' or cmdTerm == 'quit' or cmdTerm == 'q':
+        elif 'exit'.startswith( cmdTerm ) or 'quit'.startswith( cmdTerm ):
             exit()
 
-        elif cmdTerm == 'dump':
-            if input("Are you sure you'd like to dump currently loaded collection? (y/n) ").lower() == "y":
+        elif 'dump'.startswith( cmdTerm ):
+            if "yes".startswith(input("Are you sure you'd like to dump currently loaded collection? (y/n) ").lower()):
                 lsysCollection = list()
                 print("Done.")
 
-        elif cmdTerm == 'mod' or cmdTerm == 'm':
+        elif 'mod'.startswith( cmdTerm ):
             l = getLsysFromCollection( lsysCollection, param )
             try:
                 attr = userIN[2].lower()
                 if attr == 'angle':
-                    l.setAngle( int(userIN[3]) )
+                    l.angle = ( int(userIN[3]) )
                 elif attr == 'axiom':
-                    l.setAxiom( userIN[3] )
+                    l.axiom = ( userIN[3] )
 
-                print("Set the {} of {} to be {}".format( attr, l.getName(), userIN[3] ))
+                print("Set the {} of {} to be {}".format( attr, l.name, userIN[3] ))
             except ValueError:
                 print("Error: Invalid attribute value. Attribute value must be integer for angle.")
             except IndexError:
                 print("Error: Invalid number of arguments. Usage 'mod [lsys_name] [lsys_attr] [new_attr_val]'")
             except AttributeError:
-                # getLsysFromCollection returned None
                 print("Error: No lsys objects are currently loaded.")
 
         elif cmdTerm == '':
