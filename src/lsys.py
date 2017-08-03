@@ -70,7 +70,7 @@ class lsys( object ):
 
     def __repr__( self ):
         """ Create and return the string representation of an lsys object """
-        result = "Name: {0}\nAngle: degrees{1}\nAlphabet: {2}\nAxiom: {3}\nRules:\n{4}"
+        result = "Name: {0}\nAngle: {1} degrees\nAlphabet: {2}\nAxiom: {3}\nRules:\n{4}"
 
         rule_string = ""
         for key in self.ruleset.keys():

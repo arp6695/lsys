@@ -71,6 +71,16 @@ Generic root tag (named 'collection'), then one tag for each lsys. Of the form:
 
 </data>
 
+<data>
+    <lsys name="" angle="1" axiom="ABC" >
+        <rule var="F">
+            <context left="*" right="*" />
+            <case prob="1" result="F++F++F++F"/>
+        </rule>
+    </lsys>
+</data>
+
+
 Note: Probabilities for probabalistic rules should be floats that add up to 1, but are not checked
         TODO: This could be checked easily
 """
@@ -81,6 +91,37 @@ import fractions                        # For interpreting fractions parsed from
 
 def getLsysFromFile( filename ):
     """ Open a file designated by 'filename' and return a colleciton lsys objects parsed from it. """
+    """
+for lsys_field in child:
+    if lsys_field.tag == "name":
+        l.name = lsys_field.text.replace(" ", "")
+    elif lsys_field.tag == "angle":
+            l.angle = float( fractions.Fraction( lsys_field.text ) )
+    elif lsys_field.tag == "axiom":
+        l.axiom = lsys_field.text.replace(" ", "")
+    elif lsys_field.tag == "rule":
+        value = ([],[])
+        key = None      # Must be initialized
+
+        # Iterate thru each field under rule
+        for rule_field in lsys_field:
+            if rule_field.tag == "var":
+                key = rule_field.text.replace(" ", "")
+            elif rule_field.tag == "case":
+
+                # Iterate thru each field in a given case
+                for case_field in rule_field:
+                    if case_field.tag == "prob":
+
+                        value[1].append( float( fractions.Fraction( case_field.text ) ) )
+
+                    elif case_field.tag == "result":
+                        value[0].append( case_field.text.replace(" ", "") )
+        ruleset[key] = value
+    else:
+        break
+
+    """
 
     root = ET.parse( filename ).getroot()
 
@@ -92,35 +133,32 @@ def getLsysFromFile( filename ):
         l = createLsys()
         ruleset = dict()
 
-        # Iterate thru all lsys data fields
-        for lsys_field in child:
-            if lsys_field.tag == "name":
-                l.name = lsys_field.text.replace(" ", "")
-            elif lsys_field.tag == "angle":
-                    l.angle = float( fractions.Fraction( lsys_field.text ) )
-            elif lsys_field.tag == "axiom":
-                l.axiom = lsys_field.text.replace(" ", "")
-            elif lsys_field.tag == "rule":
-                value = ([],[])
-                key = None      # Must be initialized
 
-                # Iterate thru each field under rule
-                for rule_field in lsys_field:
-                    if rule_field.tag == "var":
-                        key = rule_field.text.replace(" ", "")
-                    elif rule_field.tag == "case":
+        # Iterate thru all lsys attributes
+        for attr in child.attrib.keys():
+            if attr == "name":
+                l.name = child.attrib[attr]
+            elif attr == "angle":
+                l.angle = child.attrib[attr]
+            elif attr == "axiom":
+                l.axiom = child.attrib[attr]
 
-                        # Iterate thru each field in a given case
-                        for case_field in rule_field:
-                            if case_field.tag == "prob":
+        # Iterate thru all rules
+        for rule in child:
 
-                                value[1].append( float( fractions.Fraction( case_field.text ) ) )
+            key = rule.attrib["var"]
+            value = ( [], [] )
 
-                            elif case_field.tag == "result":
-                                value[0].append( case_field.text.replace(" ", "") )
-                ruleset[key] = value
-            else:
-                break
+            for field in rule:
+                if field.tag == "case":
+                    value[1].append( float( fractions.Fraction( field.attrib["prob"] ) ) )
+                    value[0].append( field.attrib["result"] )
+
+                elif field.tag == "context":
+                    pass
+
+            ruleset[key] = value
+
         l.ruleset = ruleset
         result.append( l )
     return result

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<data>
+
+  <lsys name="DragonCurve" angle="90" axiom="FX" >
+    <rule var="X">
+      <context left="*" right="*" />
+      <case prob="1" result="X+YF+"/>
+    </rule>
+
+    <rule var="Y">
+      <context left="*" right="*"/>
+      <case prob="1" result="-FX-Y" />
+    </rule>
+  </lsys>
+
+  <lsys name="StochasticWeed" angle="25.7" axiom="#00cc00 F" >
+
+    <rule var="F">
+      <context left="*" right="*" />
+      <case prob="1/3" result="F[+F]F[-F]F"/>
+      <case prob="1/3" result="F[+F]F"/>
+      <case prob="1/3" result="F[-F]F"/>
+    </rule>
+
+
+  </lsys>
+
+  <lsys name="LevyCurve" angle="45" axiom="F" >
+    <rule var="F">
+      <context left="*" right="*" />
+      <case prob="1" result="+F--F+"/>
+    </rule>
+  </lsys>
+
+
+  <!--
+  <lsys name="" angle="1" axiom="ABC" >
+    <rule var="F">
+      <context left="*" right="*" />
+      <case prob="1" result="F++F++F++F"/>
+    </rule>
+  </lsys>
+  -->
+
+</data>

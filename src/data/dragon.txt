@@ -1,3 +1,0 @@
-{ DragonCurve, 90, FX, X->X+YF+, Y->-FX-Y };
-{ DragonTetra, 120, F, F->F+F-F };
-{ DragHiway, 45, -X, X->X+F+Y, Y->X-F-Y };

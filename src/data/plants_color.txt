@@ -1,4 +1,0 @@
-{ BushPlant, 22, F, F-> #8d513dFF-[#1cb71c-F+F+F]+[#30dc30 +F-F-F]};
-{ FractalPlant, 25, X, X->#8d513dF-[#30dc30[X]+#45ff45X]+#1cb71cF[#45ff45 +FX]-X, F->FF };
-{ TreePlant, 25, FG, F->#8d513dFF-[#1cb71c-F+F]+[#30dc30+F-F], G->#8d513dFF+[#1cb71c+F]+[#45ff45-F]};
-{ VinePlant, 27, F, F->#8d513dFF[#1cb71c-F++F][#30dc30+F--F]#45ff45++F--F };

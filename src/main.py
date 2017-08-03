@@ -104,7 +104,7 @@ def chooseAction( token, size, angle ):
         t.backward(size/4)
         t.lt(45)
 
-    elif char is "!":
+    elif token is "!":
         ANGLE_REVERSE = not ANGLE_REVERSE
 
     elif len(token) > 1:
@@ -133,7 +133,7 @@ def runLsys( l, n, s ):
     print("The image is being generated. This may or may not take a while.")
 
     try:
-        runLsysHelper( l.axiom(), l, n, s )
+        runLsysHelper( l.axiom, l, n, s )
         t.hideturtle()
         t.update()
         print("Image generated. Use 'save' command to save the image to file.")
@@ -178,7 +178,7 @@ def runLsysHelper( string, l, depth, size ):
                 size_multiplier = float( s[0:] )
 
         # Character must correspond to some executable action
-        elif depth <= 0 or char not in l.getRuleset().keys():
+        elif depth <= 0 or char not in l.ruleset.keys():
             chooseAction( char, size * size_multiplier, l.angle )
 
         # Otherwise recurse with a rule string

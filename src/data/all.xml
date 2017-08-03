@@ -3,25 +3,25 @@
 <data>
 
     <lsys>
-      <name> DragonCurve </name>
-      <angle> 90 </angle>
-      <axiom> FX </axiom>
-      <rule>
-        <var>  X </var>
-        <case>
-          <prob> 1 </prob>
-          <result> X+YF+ </result>
-        </case>
-      </rule>
+    <name> DragonCurve </name>
+    <angle> 90 </angle>
+    <axiom> FX </axiom>
+    <rule>
+      <var>  X </var>
+      <case>
+        <prob> 1 </prob>
+        <result> X+YF+ </result>
+      </case>
+    </rule>
 
-      <rule>
-        <var> Y </var>
-        <case>
-          <prob> 1 </prob>
-          <result> -FX-Y </result>
-        </case>
-      </rule>
-    </lsys>
+    <rule>
+      <var> Y </var>
+      <case>
+        <prob> 1 </prob>
+        <result> -FX-Y </result>
+      </case>
+    </rule>
+  </lsys>
 
     <lsys>
       <name>DragonTetra</name>
@@ -353,6 +353,21 @@
           <result> +F--F+ </result>
         </case>
       </rule>
+    </lsys>
+
+    <lsys>
+      <name> LevyTapestry </name>
+      <angle> 45 </angle>
+      <axiom> F++F++F++F </axiom>
+
+      <rule>
+        <var> F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> +F--F+ </result>
+        </case>
+      </rule>
+
     </lsys>
 
     <lsys>
@@ -706,23 +721,23 @@
     <lsys>
       <name>Stochastic Weed</name>
       <angle>25.7</angle>
-      <axiom>F</axiom>
+      <axiom>#00cc00 F</axiom>
 
       <rule>
         <var>  F </var>
         <case>
           <prob>  1/3  </prob>
-          <result> #00cc00 F[+F]F[-F]F  </result>
+          <result>  F[+F]F[-F]F  </result>
         </case>
 
         <case>
           <prob>  1/3  </prob>
-          <result> #00cc00 F[+F]F  </result>
+          <result> F[+F]F  </result>
         </case>
 
         <case>
           <prob>  1/3  </prob>
-          <result> #00cc00 F[-F]F  </result>
+          <result> F[-F]F  </result>
         </case>
       </rule>
 
