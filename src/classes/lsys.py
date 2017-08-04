@@ -31,7 +31,6 @@ produce fractal pictures.
             the first list is a collection of every result string to which a given variable can map
             the second list contains the weighted probabilities of each string
                 (ordering of this list corresponds to each variable in the previous list)
-
 """
 
 class lsys( object ):
@@ -84,7 +83,14 @@ class lsys( object ):
                 trans = "{}\n".format( rule[0][0] )
             rule_string += " {} -> {}".format(key, trans)
 
-        return result.format( self.name, self.angle, self.alphabet, self.axiom, rule_string )
+        if len(self.alphabet) == 0:
+            self.alphabet = self.genAlphabet()
+
+        alphabet_string = ""
+        for sym in self.alphabet:
+            alphabet_string += "{} ".format(sym)
+
+        return result.format( self.name, self.angle, alphabet_string, self.axiom, rule_string )
 
     def genAlphabet(self):
         """ Create and return the alphabet of this lsys"""
@@ -92,14 +98,24 @@ class lsys( object ):
         for key in self.ruleset.keys():
             if key not in result:
                 result.append(key)
-            for val in self.ruleset[key]:
-                if val not in result:
-                    result.append(val)
+            for string in self.ruleset[key][0]:
+                for token in string:
+                    if token not in result:
+                        result.append(token)
         return result
 
     def isComplete(self):
         """ Returns True if the lsys has valid and complete fields """
         return len(self.name) > 0 and len(self.axiom) > 0 and len(self.ruleset) > 0 and self.angle is not 0
+
+    def isStochastic(self):
+        for var in self.ruleset.keys():
+            if len(self.ruleset[var][0]) > 1:
+                return True
+        return False
+
+    def isContextSensitive(self):
+        return False
 
 def createLsys():
     """ Create and return an lsys with default params """

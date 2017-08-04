@@ -1,0 +1,899 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<data>
+  <lsys>
+    <name> DragonCurve </name>
+    <angle> 90 </angle>
+    <axiom> FX </axiom>
+    <rule>
+      <var>  X </var>
+      <case>
+        <prob> 1 </prob>
+        <result> X+YF+ </result>
+      </case>
+    </rule>
+
+    <rule>
+      <var> Y </var>
+      <case>
+        <prob> 1 </prob>
+        <result> -FX-Y </result>
+      </case>
+    </rule>
+  </lsys>
+
+    <lsys>
+      <name>DragonTetra</name>
+      <angle>120</angle>
+      <axiom>F</axiom>
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> F+F-F </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name>DragHiway</name>
+      <angle>45</angle>
+      <axiom>-X</axiom>
+
+      <rule>
+        <var>  X </var>
+        <case>
+          <prob> 1 </prob>
+          <result> X+F+Y </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  Y </var>
+        <case>
+          <prob> 1 </prob>
+          <result> X-F-Y </result>
+        </case>
+      </rule>
+
+    </lsys>
+
+    <lsys>
+      <name>SierTri</name>
+      <angle>120</angle>
+      <axiom>F-G-G</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> F-G+F+G-F </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  G </var>
+        <case>
+          <prob> 1 </prob>
+          <result> GG </result>
+        </case>
+      </rule>
+
+    </lsys>
+
+    <lsys>
+      <name>SierCarpet</name>
+      <angle>90</angle>
+      <axiom>F</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> F+F-F-F-G+F+F+F-F </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  G </var>
+        <case>
+          <prob> 1 </prob>
+          <result> GG </result>
+        </case>
+      </rule>
+
+    </lsys>
+
+    <lsys>
+      <name>SierTriApprox</name>
+      <angle>60</angle>
+      <axiom>F</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> +G-F-G+ </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  G </var>
+        <case>
+          <prob> 1 </prob>
+          <result> -F+G+F- </result>
+        </case>
+      </rule>
+
+    </lsys>
+
+    <lsys>
+      <name>SierCurve</name>
+      <angle>45</angle>
+      <axiom>A--F--A--F</axiom>
+
+      <rule>
+        <var>  A </var>
+        <case>
+          <prob> 1 </prob>
+          <result> +B-F-B+ </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  B </var>
+        <case>
+          <prob> 1 </prob>
+          <result> -A+F+A- </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name>KochSnowFlake</name>
+      <angle>60</angle>
+      <axiom>F++F++F</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> F-F++F-F </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  X </var>
+        <case>
+          <prob> 1 </prob>
+          <result> FF </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name>KochSnowCurve</name>
+      <angle>60</angle>
+      <axiom>F</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> F+F--F+F </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name>KochCurve</name>
+      <angle>90</angle>
+      <axiom>F</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> F+F-F-F+F </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name>KochIsland</name>
+      <angle>90</angle>
+      <axiom>XYXYXYX+XYXYXYX+XYXYXYX+XYXYXYX</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result>  </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  X </var>
+        <case>
+          <prob> 1 </prob>
+          <result> FX+FX+FXFY-FY- </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  Y </var>
+        <case>
+          <prob> 1 </prob>
+          <result> +FX+FXFY-FY-FY </result>
+        </case>
+      </rule>
+
+    </lsys>
+
+    <lsys>
+      <name>CesaroFractal</name>
+      <angle>85</angle>
+      <axiom>F</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> F+F-F-F+F </result>
+        </case>
+      </rule>
+
+    </lsys>
+
+    <lsys>
+      <name>FractalTree</name>
+      <angle>45</angle>
+      <axiom>L</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> FF </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  L </var>
+        <case>
+          <prob> 1 </prob>
+          <result> F[+L]-L </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name>FractalPlant</name>
+      <angle>25</angle>
+      <axiom>X</axiom>
+
+      <rule>
+        <var>  X </var>
+        <case>
+          <prob> 1 </prob>
+          <result>  #8d513d F-[ #30dc30 [X]+ #45ff45 X]+ #1cb71cF [ #45ff45 +FX]-X  </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> FF </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name>BushPlant</name>
+      <angle>22</angle>
+      <axiom>F</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result>  #8d513d FF-[ #1cb71c -F+F+F]+[ #30dc30 +F-F-F]  </result>
+        </case>
+      </rule>
+
+    </lsys>
+
+    <lsys>
+      <name>TreePlant</name>
+      <angle>25</angle>
+      <axiom>FG</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result>  #8d513d FF-[ #1cb71c -F+F]+[ #30dc30 +F-F]  </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  G </var>
+        <case>
+          <prob> 1 </prob>
+          <result>  #8d513d FF+[ #1cb71c +F]+[ #45ff45 -F]  </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name>VinePlant</name>
+      <angle>27</angle>
+      <axiom>F</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result>  #8d513d FF[ #1cb71c -F++F][ #30dc30 +F--F] #45ff45 ++F--F  </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name>LevyCurve</name>
+      <angle>45</angle>
+      <axiom>F</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> +F--F+ </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name> LevyTapestry </name>
+      <angle> 45 </angle>
+      <axiom> F++F++F++F </axiom>
+
+      <rule>
+        <var> F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> +F--F+ </result>
+        </case>
+      </rule>
+
+    </lsys>
+
+    <lsys>
+      <name>HilbertCurve</name>
+      <angle>90</angle>
+      <axiom>A</axiom>
+
+      <rule>
+        <var>  A </var>
+        <case>
+          <prob> 1 </prob>
+          <result> -BF+AFA+FB- </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  B </var>
+        <case>
+          <prob> 1 </prob>
+          <result> +AF-BFB-FA+ </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name>PeanoCurve</name>
+      <angle>90</angle>
+      <axiom>F</axiom>
+
+      <rule>
+        <var>  V </var>
+        <case>
+          <prob> 1 </prob>
+          <result> F-F+F+F+F-F-F-F+F </result>
+        </case>
+      </rule>
+
+    </lsys>
+
+    <lsys>
+      <name>PentaTessel</name>
+      <angle>72</angle>
+      <axiom>F-F-F-F-F</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> F-F++F+F-F-F </result>
+        </case>
+      </rule>
+
+    </lsys>
+
+    <lsys>
+      <name>BoxCurve</name>
+      <angle>90</angle>
+      <axiom>F-F-F-F</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> F-F+F+F-F </result>
+        </case>
+      </rule>
+
+    </lsys>
+
+    <lsys>
+      <name>MooreCurve</name>
+      <angle>90</angle>
+      <axiom>AFA+F+AFA</axiom>
+
+      <rule>
+        <var>  A </var>
+        <case>
+          <prob> 1 </prob>
+          <result> -BF+AFA+FB- </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  B </var>
+        <case>
+          <prob>  1  </prob>
+          <result>  +AF-BFB-FA+  </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name>GosperCurve</name>
+      <angle>60</angle>
+      <axiom>G</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> F-G--G+F++FF+G- </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  G </var>
+        <case>
+          <prob> 1 </prob>
+          <result> +F-GG--G-F++F+G </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name>DekkingChruch</name>
+      <angle>90</angle>
+      <axiom>WZYX</axiom>
+
+      <rule>
+        <var>  W </var>
+        <case>
+          <prob> 1 </prob>
+          <result>  FW+F-XFW-F+Z  </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  X </var>
+        <case>
+          <prob> 1 </prob>
+          <result>  ++F--Y-F+Z++F--Y-F+Z  </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  Y </var>
+        <case>
+          <prob> 1 </prob>
+          <result>  ++F--Y+F-X  </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  Z </var>
+        <case>
+          <prob> 1 </prob>
+          <result>  FW+F-X  </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name>PentiveTri</name>
+      <angle>36</angle>
+      <axiom>V</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result>  </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  U </var>
+        <case>
+          <prob> 1 </prob>
+          <result> --FW++++FX--FZ </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  V </var>
+        <case>
+          <prob> 1 </prob>
+          <result> FY++FW----FX++ </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  W </var>
+        <case>
+          <prob> 1 </prob>
+          <result> ++FU----FV++FY </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  X </var>
+        <case>
+          <prob> 1 </prob>
+          <result> FZ--FU++++FV-- </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  Y </var>
+        <case>
+          <prob> 1 </prob>
+          <result> +FZ--FU+ </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  Z </var>
+        <case>
+          <prob> 1 </prob>
+          <result> -FV++FY- </result>
+        </case>
+      </rule>
+
+    </lsys>
+
+    <lsys>
+      <name>TriGrid</name>
+      <angle>60</angle>
+      <axiom>X</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result>  </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  X </var>
+        <case>
+          <prob> 1 </prob>
+          <result> FY[+FY][--FY]FY </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  Y </var>
+        <case>
+          <prob> 1 </prob>
+          <result> FX[++FX][-FX]FX </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name>HexGrid</name>
+      <angle>60</angle>
+      <axiom>F</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> -F+F+G[+F+F]- </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  G </var>
+        <case>
+          <prob> 1 </prob>
+          <result> GG </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name>Penrose</name>
+      <angle>36</angle>
+      <axiom> [H]++[H]++[H]++[H]++[H] </axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result>  </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  G </var>
+        <case>
+          <prob> 1 </prob>
+          <result> IF++JF----HF[-IF----GF]++ </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  H </var>
+        <case>
+          <prob> 1 </prob>
+          <result> +IF--JF[---GF--HF]+ </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  I </var>
+        <case>
+          <prob> 1 </prob>
+          <result> -GF++HF[+++IF++JF]- </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  J </var>
+        <case>
+          <prob> 1 </prob>
+          <result> --IF++++GF[+JF++++HF]--HF </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name>SpokeTri</name>
+      <angle>30</angle>
+      <axiom>W</axiom>
+
+      <rule>
+        <var>  W </var>
+        <case>
+          <prob> 1 </prob>
+          <result> +++X--F--ZFX+ </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  X </var>
+        <case>
+          <prob> 1 </prob>
+          <result> ---W++F++YFW- </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  Y </var>
+        <case>
+          <prob> 1 </prob>
+          <result> +ZFX--F--Z+++ </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  Z </var>
+        <case>
+          <prob> 1 </prob>
+          <result> -YFW++F++Y--- </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name>Stochastic Weed</name>
+      <angle>25.7</angle>
+      <axiom>#00cc00 F</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob>  1/3  </prob>
+          <result>  F[+F]F[-F]F  </result>
+        </case>
+
+        <case>
+          <prob>  1/3  </prob>
+          <result> F[+F]F  </result>
+        </case>
+
+        <case>
+          <prob>  1/3  </prob>
+          <result> F[-F]F  </result>
+        </case>
+      </rule>
+
+    </lsys>
+
+    <lsys>
+      <name>KochRandom</name>
+      <angle>60</angle>
+      <axiom>F</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob>  0.5  </prob>
+          <result>  F-F++F-F  </result>
+        </case>
+
+        <case>
+          <prob>  0.5  </prob>
+          <result>  F--F+F  </result>
+        </case>
+      </rule>
+
+    </lsys>
+
+    <lsys>
+      <name>Weed1</name>
+      <angle>20</angle>
+      <axiom>F</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result>  #00cc00 F[+F]F[-F][F]  </result>
+        </case>
+      </rule>
+
+    </lsys>
+
+    <lsys>
+      <name>Weed2</name>
+      <angle>25</angle>
+      <axiom>X</axiom>
+
+      <rule>
+        <var>  X </var>
+        <case>
+          <prob> 1 </prob>
+          <result> #00cc00 F[+X][-X]FX  </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result>  FF  </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name>Weed3</name>
+      <angle>30</angle>
+      <axiom>F</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> #00cc00 F[+F[+F][-F]F][-F[+F][-F]F]F[+F][-F]F </result>
+        </case>
+      </rule>
+
+    </lsys>
+
+    <lsys>
+      <name>Weed4</name>
+      <angle>25</angle>
+      <axiom>Y</axiom>
+
+      <rule>
+        <var>  F </var>
+        <case>
+          <prob> 1 </prob>
+          <result>  </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  X </var>
+        <case>
+          <prob> 1 </prob>
+          <result>  #00cc00 X[-FFF][+FFF]FX  </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var>  Y </var>
+        <case>
+          <prob> 1 </prob>
+          <result> #00cc00 YFX[+Y][-Y] </result>
+        </case>
+      </rule>
+
+    </lsys>
+
+    <lsys>
+      <name> Untitled1 </name>
+      <angle> 90 </angle>
+      <axiom> F </axiom>
+
+      <rule>
+        <var> F </var>
+        <case>
+          <prob> 1 </prob>
+          <result> +F+F-F-F+F+F+F-F-F+F  </result>
+        </case>
+      </rule>
+
+    </lsys>
+
+    <lsys>
+      <name>Fern</name>
+      <angle> 7.2 </angle>
+      <axiom> +++++++++++++X </axiom>
+
+      <rule>
+        <var> X </var>
+        <case>
+          <prob> 1 </prob>
+          <result> #858051 F[@0.5+++++++++X]-F[@0.4-----------!X]@0.6X </result>
+        </case>
+      </rule>
+    </lsys>
+
+    <lsys>
+      <name> Alien </name>
+      <angle> 360/11 </angle>
+      <axiom> X </axiom>
+
+      <rule>
+        <var> X </var>
+        <case>
+          <prob> 1 </prob>
+          <result> [@Q2 @I2-FX] K [@Q2@I2---FX] </result>
+        </case>
+      </rule>
+
+      <rule>
+        <var> F </var>
+          <case>
+            <prob> 1 </prob>
+            <result>  </result>
+          </case>
+        </rule>
+    </lsys>
+
+</data>

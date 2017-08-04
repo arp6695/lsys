@@ -27,15 +27,13 @@ Following commands are:
     'size [int]'                                    -   Change the size of the picture (5 by default)
     'help'                                          -   Print this help screen
     'exit' or 'quit'                                -   Quit the program
-
-TODO: Implement stochasticism (redo the parsing [slightly], allow for variability)
 """
 
 import sys                  # For Command Line Arguments
 import os                   # For determining the current directory (image saving & file loading)
 import datetime             # For naming images
-import turtle as t          # For Drawing
-import math                 # For additional
+import turtle as t          # For Drawing TODO: Move this
+from math import sqrt
 
 from util.IO import *       # For Reading/Writing lsys to/from files
 from util.Stack import *    # For Stack support
@@ -45,6 +43,8 @@ try:
 except ImportError:
     print("Warning: Could not import 'canvasvg'. You will be unable to save images.")
 
+
+# NOTE: This should be done in either 'lsys.py' or 'rule.py'
 try:
     import numpy            # For choosing symbol string with weighted probabilities
 except ImportError:
@@ -53,8 +53,17 @@ except ImportError:
 # Global Stack (for saving turtle position and heading between recursive function calls)
 STACK = getStack()
 
-# Global flag for whether or not left and right turns are reversed.
-ANGLE_REVERSE = False
+DEFAULT_COLOR_FILE = "src/misc/colors.xml"
+
+DEFAULT_DATA_FILE = "src/data/all.xml"
+
+try:
+    COLORS = getColors( DEFAULT_COLOR_FILE )
+except FileNotFoundError:
+    COLORS = None
+except ValueError:
+    COLORS = None
+
 
 def turtleInit():
     """ Initialize the turtle module """
@@ -104,13 +113,6 @@ def chooseAction( token, size, angle ):
         t.backward(size/4)
         t.lt(45)
 
-    elif token is "!":
-        ANGLE_REVERSE = not ANGLE_REVERSE
-
-    elif len(token) > 1:
-        if token[0] == "#":
-            t.color( token )
-
     return None
 
 def runLsys( l, n, s ):
@@ -125,9 +127,6 @@ def runLsys( l, n, s ):
     global STACK
     if not STACK.isEmpty():
         STACK = getStack()
-
-    global ANGLE_REVERSE
-    ANGLE_REVERSE = False
 
     turtleInit()
     print("The image is being generated. This may or may not take a while.")
@@ -151,15 +150,28 @@ def runLsysHelper( string, l, depth, size ):
     size - an integer, unit size of turtle
     """
 
+    global COLORS
+
     size_multiplier = 1
 
     for i in range(len(string)):
         char = string[i]
 
-        # Must pass the hex string (in its entirety) as a token
         if char is "#":
-            chooseAction( string[i:i+7], size * size_multiplier, l.angle)
-            i += 6
+            id = ""
+            i += 1
+            while string[i].isdigit():
+                id += string[i]
+                i += 1
+            try:
+                t.color( COLORS[ int(id) ] )
+
+            # No/invalid color file? Who cares?
+            except t.TurtleGraphicsError:
+                pass
+            except TypeError:
+                pass
+
 
         # Modify size multiplier by reading remaining string
         elif char is "@":
@@ -171,7 +183,7 @@ def runLsysHelper( string, l, depth, size ):
                 i += 1
 
             if s[0].upper() == "Q":
-                size_multiplier = math.sqrt( float(s[1:]) )
+                size_multiplier = sqrt( float(s[1:]) )
             elif s[0].upper() == "I":
                 size_multiplier = 1 / float(s[1:])
             else:
@@ -243,8 +255,9 @@ def display( param, lst ):
             print( l )
 
 def main():
-
     size = 5
+
+    global COLORS
 
     # Initialization: check for loadable file
     print( "Hello. Welcome to lsys." )
@@ -269,6 +282,12 @@ def main():
 
         if 'help'.startswith( cmdTerm ):
             printHelp()
+
+        if 'colors'.startswith( cmdTerm ):
+            if COLORS == None:
+                print("No colors are loaded.")
+            else:
+                print( COLORS )
 
         elif 'display'.startswith( cmdTerm ):
             display( param, lsysCollection )
@@ -359,13 +378,13 @@ def main():
             try:
                 attr = userIN[2].lower()
                 if attr == 'angle':
-                    l.angle = ( int(userIN[3]) )
+                    l.angle = ( float(userIN[3]) )
                 elif attr == 'axiom':
                     l.axiom = ( userIN[3] )
 
                 print("Set the {} of {} to be {}".format( attr, l.name, userIN[3] ))
             except ValueError:
-                print("Error: Invalid attribute value. Attribute value must be integer for angle.")
+                print("Error: Invalid attribute. Attribute must be float for angle.")
             except IndexError:
                 print("Error: Invalid number of arguments. Usage 'mod [lsys_name] [lsys_attr] [new_attr_val]'")
             except AttributeError:

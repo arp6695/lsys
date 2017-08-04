@@ -37,27 +37,11 @@ Syntax is as such:
 Generic root tag (named 'collection'), then one tag for each lsys. Of the form:
 
 <data>
-
-...
-
-    <lsys>
-        <name> STR </name>
-        <angle> INT </angle>
-        <axiom> STR </axiom>
-
-        <rule>
-            <var> VAR </var>
-            <case>
-                <prob> FLOAT </prob>
-                <result> STR </result>
-            </case>
-            <case>
-
-                ...
-
-            </case>
-        </rule>
-        <rule>
+    <lsys name="default_name" angle="90" axiom="ABC" >
+        <rule var="F">
+            <context left="*" right="*" />
+            <case prob="1/3" result="F++F++F++F"/>
+            <case prob="0.5" result="F++F++F++F"/>
 
             ...
 
@@ -66,18 +50,6 @@ Generic root tag (named 'collection'), then one tag for each lsys. Of the form:
         ...
 
     </lsys>
-
-    ...
-
-</data>
-
-<data>
-    <lsys name="" angle="1" axiom="ABC" >
-        <rule var="F">
-            <context left="*" right="*" />
-            <case prob="1" result="F++F++F++F"/>
-        </rule>
-    </lsys>
 </data>
 
 
@@ -85,43 +57,12 @@ Note: Probabilities for probabalistic rules should be floats that add up to 1, b
         TODO: This could be checked easily
 """
 
-from lsys import *                      # For creating lsys objects
+from classes.lsys import *                      # For creating lsys objects
 import xml.etree.ElementTree as ET      # For parsing XML files
 import fractions                        # For interpreting fractions parsed from data
 
 def getLsysFromFile( filename ):
     """ Open a file designated by 'filename' and return a colleciton lsys objects parsed from it. """
-    """
-for lsys_field in child:
-    if lsys_field.tag == "name":
-        l.name = lsys_field.text.replace(" ", "")
-    elif lsys_field.tag == "angle":
-            l.angle = float( fractions.Fraction( lsys_field.text ) )
-    elif lsys_field.tag == "axiom":
-        l.axiom = lsys_field.text.replace(" ", "")
-    elif lsys_field.tag == "rule":
-        value = ([],[])
-        key = None      # Must be initialized
-
-        # Iterate thru each field under rule
-        for rule_field in lsys_field:
-            if rule_field.tag == "var":
-                key = rule_field.text.replace(" ", "")
-            elif rule_field.tag == "case":
-
-                # Iterate thru each field in a given case
-                for case_field in rule_field:
-                    if case_field.tag == "prob":
-
-                        value[1].append( float( fractions.Fraction( case_field.text ) ) )
-
-                    elif case_field.tag == "result":
-                        value[0].append( case_field.text.replace(" ", "") )
-        ruleset[key] = value
-    else:
-        break
-
-    """
 
     root = ET.parse( filename ).getroot()
 
@@ -139,7 +80,7 @@ for lsys_field in child:
             if attr == "name":
                 l.name = child.attrib[attr]
             elif attr == "angle":
-                l.angle = child.attrib[attr]
+                l.angle = float( fractions.Fraction( child.attrib[attr] ) )
             elif attr == "axiom":
                 l.axiom = child.attrib[attr]
 
@@ -152,15 +93,33 @@ for lsys_field in child:
             for field in rule:
                 if field.tag == "case":
                     value[1].append( float( fractions.Fraction( field.attrib["prob"] ) ) )
-                    value[0].append( field.attrib["result"] )
+                    value[0].append( field.attrib["result"].replace(" ", "") )
 
                 elif field.tag == "context":
-                    pass
+                    l.rightcontext = field.attrib["right"]
+                    l.leftcontext = field.attrib["left"]
 
             ruleset[key] = value
 
         l.ruleset = ruleset
         result.append( l )
+    return result
+
+def getColors( filename ):
+    """ Open colors.xml and make a map of color id's to color strings.
+        A color string can be either the color name or a hex string:
+            Hex string -> '#00ccff'
+            Color Name -> 'Red'
+    """
+
+    root = ET.parse( filename ).getroot()
+
+    result = dict()
+
+    for child in root:
+        if child.tag == "color":
+            result[ int(child.attrib["id"]) ] = child.attrib["color"]
+
     return result
 
 
