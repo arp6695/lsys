@@ -75,13 +75,16 @@ class lsys( object ):
         for key in self.ruleset.keys():
             rule = self.ruleset[key]
 
-            if len(rule[0]) > 1:
+            if len(rule.cases[0]) > 1:
                 trans = ""
                 for i in range(len(rule[0])):
                     trans += "\t({}%) {}\n".format( round(rule[1][i] * 100, 2), rule[0][i] )
             else:
-                trans = "{}\n".format( rule[0][0] )
+                trans = "{}\n".format( rule.cases[0][0] )
             rule_string += " {} -> {}".format(key, trans)
+
+            if rule.isContextSensitive():
+                rule_string += " if {} < {} > {}".format(rule.rcontext, rule.var, rule.lcontext)
 
         if len(self.alphabet) == 0:
             self.alphabet = self.genAlphabet()
@@ -98,7 +101,7 @@ class lsys( object ):
         for key in self.ruleset.keys():
             if key not in result:
                 result.append(key)
-            for string in self.ruleset[key][0]:
+            for string in self.ruleset[key].cases[0]:
                 for token in string:
                     if token not in result:
                         result.append(token)
@@ -116,6 +119,14 @@ class lsys( object ):
 
     def isContextSensitive(self):
         return False
+
+    def getResult( self, var, ltoken, rtoken ):
+        """ Get the resultant string, given the right and left tokens
+        var - A variable symbol in this lsys' alphabet
+        rotken - A symbol in the lsys' alphabet, to the right of 'var'
+        ltoken - A symbol in the lsys' alphabet, to the left of 'var'
+        """
+        return self.ruleset[var].getResult( rtoken, ltoken )
 
 def createLsys():
     """ Create and return an lsys with default params """

@@ -82,15 +82,14 @@ def chooseAction( token, size, angle ):
     angle - an integer, the angle associated with the lsys
     """
     global STACK
-    global ANGLE_REVERSE
 
     # Defaults
     if token in "FGHIJ":
         t.forward( size )
     elif token == "-":
-        t.left( angle ) if ANGLE_REVERSE else t.right( angle )
+        t.right( angle )
     elif token == "+":
-        t.right( angle ) if ANGLE_REVERSE else t.left( angle )
+        t.left( angle )
 
     # Stack related
     elif token == "[":
@@ -195,7 +194,8 @@ def runLsysHelper( string, l, depth, size ):
 
         # Otherwise recurse with a rule string
         else:
-            s = numpy.random.choice( l.ruleset[char][0], 1, True, l.ruleset[char][1] ).tolist()[0]
+            #s = numpy.random.choice( l.ruleset[char][0], 1, True, l.ruleset[char][1] ).tolist()[0]
+            s = l.getResult( char, string[i-1] if i > 0 else "", string[i+1] if i < len(string)-1 else "" )
             runLsysHelper( s, l, depth-1, size * size_multiplier )
 
 def printHelp():
@@ -267,7 +267,10 @@ def main():
         lsysCollection = loadLsysFromFile( filename )
     else:
         lsysCollection = []
-        print( "No file was loaded. Use 'load [filename]' to parse a file for lsys objects." )
+        try:
+            lsysCollection = loadLsysFromFile( DEFAULT_DATA_FILE )
+        except FileNotFoundError:
+            print( "No file was loaded. Use 'load [filename]' to parse a file for lsys objects." )
 
     # User input loop
     while True:

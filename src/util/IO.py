@@ -34,7 +34,7 @@ Note: If you'd like to map a variable to nothing, then the <result> tag must hav
 between the tags.
 
 Syntax is as such:
-Generic root tag (named 'collection'), then one tag for each lsys. Of the form:
+Generic root tag (named 'data'), then one tag for each lsys. Of the form:
 
 <data>
     <lsys name="default_name" angle="90" axiom="ABC" >
@@ -52,12 +52,15 @@ Generic root tag (named 'collection'), then one tag for each lsys. Of the form:
     </lsys>
 </data>
 
+Note: The string in the 'context' element should be another token or a
+    regular expression (as recognized by Python's 're' module)
+    The 'context' element is optional, as all contexts are "*" (universal selector) by default.
 
 Note: Probabilities for probabalistic rules should be floats that add up to 1, but are not checked
-        TODO: This could be checked easily
 """
 
-from classes.lsys import *                      # For creating lsys objects
+from classes.lsys import *              # For creating lsys objects
+from classes.rule import *              # For creating Rule Objects
 import xml.etree.ElementTree as ET      # For parsing XML files
 import fractions                        # For interpreting fractions parsed from data
 
@@ -87,6 +90,8 @@ def getLsysFromFile( filename ):
         # Iterate thru all rules
         for rule in child:
 
+            ruleObject = getRule()
+
             key = rule.attrib["var"]
             value = ( [], [] )
 
@@ -99,7 +104,8 @@ def getLsysFromFile( filename ):
                     l.rightcontext = field.attrib["right"]
                     l.leftcontext = field.attrib["left"]
 
-            ruleset[key] = value
+            ruleObject.cases = value
+            ruleset[key] = ruleObject
 
         l.ruleset = ruleset
         result.append( l )

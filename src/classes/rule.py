@@ -34,19 +34,23 @@ class rule( object ):
             result = "{} -> {}".format(self.var, self.cases[0][0])
         return result
 
-    def getResult(self, rtoken, ltoken):
+    def getResult(self, ltoken, rtoken):
         """ Get the string output (result) associated with this rule """
 
-        # Context check here
         try:
             if (self.lcontext is "*" and self.rcontext is "*") or \
             (re.matches( rcon, self.rcontext ) and re.matches( lcon, lcontext )):
-                return numpy.random.choice( self.cases[0], 1, True, self.cases[1] )
+                return numpy.random.choice( self.cases[0], 1, True, self.cases[1] ).tolist()[0]
+            else:
+                return ""
         except NameError:
             return self.cases[0][0]
         except sre_constants.error:
-            print("It appears the regular expression associated with this rule is incorrect.")
+            print("Error: Invalid regular expression")
             print("{}", self)
+
+    def isContextSensitive(self):
+        return self.rcontext != "*" and self.lcontext != "*"
 
 def getRule():
     return rule( str(), tuple(), "*", "*" )
