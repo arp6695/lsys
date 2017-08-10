@@ -5,32 +5,31 @@ By: Alex Piazza
 Lessons courtesy of Wikipedia https://en.wikipedia.org/wiki/L-system
 A Lindenmeyer system is a way of rewriting strings. The symbols within these strings
 change according to rules, and, when interpreted as commands to be executed by a turtle,
-produce fractal pictures.
+produce fractal images. L-Systems have:
 
     An Alphabet:
-        A collection of symbols that, with the ruleset, collectivly comprise the L-System
+        A collection of Symbols that, along with the ruleset, collectivly comprise the L-System
 
     An Angle:
         The default angle that the turtle should turn
         Expressed by an float value 0-360, interpreted as degrees
         NOTE: I've seen lsys' angles be expressed as a divisor of 360
             e.g. If the lsys angle = 6, then the angle which turtle will turn is 360/6 degrees, or 60 degrees
-
-    A Symbol is a string token, and are either:
-        A Constant: symbol which is not mapped to any string by the ruleset, and is therefore never changed once created
-        A Variable: symbol which is mapped to a
-        There's no hard and fast trait that defines these within this L-System alphabet.
-        Symbols are constant or vary by convention; this distinction is not specified in this system.
+            In this implementation, the L-System's angle is the angle that the turtle will turn, both left and right.
 
     An Axiom: A symbol or string of symbols that represents the initial state of the system
 
+    A Symbol is a string token, and are either:
+        A Constant: symbol which is not mapped to any string by the ruleset, and is therefore never changed once created
+        A Variable: symbol which is mapped to a resultant string of other symbols in some way.
+        There's no hard and fast trait that defines a symbol as a constant or variable within this L-System alphabet.
+        i.e. Symbols are constant or vary by convention; this distinction is not specified in this system.
+        Implicitly, a constant is defined as a variable that maps only to itself.
+
     Ruleset: 'rules' describing how symbols change from iteration to iteration.
     Specficially, this will be represented by a dictionary with the following key/val pairs:
-        <symbol, tuple>
-        Where 'symbol' is a variable symbol and 'tuple' is a tuple of two lists:
-            the first list is a collection of every result string to which a given variable can map
-            the second list contains the weighted probabilities of each string
-                (ordering of this list corresponds to each variable in the previous list)
+        <symbol, rule>
+        Where 'symbol' is a variable symbol and 'rule' is a rule object (see rule.py):
 """
 
 class lsys( object ):

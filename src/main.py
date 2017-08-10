@@ -43,13 +43,6 @@ try:
 except ImportError:
     print("Warning: Could not import 'canvasvg'. You will be unable to save images.")
 
-
-# NOTE: This should be done in either 'lsys.py' or 'rule.py'
-try:
-    import numpy            # For choosing symbol string with weighted probabilities
-except ImportError:
-    print("Warning: Could not import 'numpy'. You will be unable to draw stochastic L-systems.")
-
 # Global Stack (for saving turtle position and heading between recursive function calls)
 STACK = getStack()
 
@@ -194,7 +187,6 @@ def runLsysHelper( string, l, depth, size ):
 
         # Otherwise recurse with a rule string
         else:
-            #s = numpy.random.choice( l.ruleset[char][0], 1, True, l.ruleset[char][1] ).tolist()[0]
             s = l.getResult( char, string[i-1] if i > 0 else "", string[i+1] if i < len(string)-1 else "" )
             runLsysHelper( s, l, depth-1, size * size_multiplier )
 

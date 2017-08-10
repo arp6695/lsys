@@ -2,196 +2,201 @@
 
 <data>
 
+  <lsys name="ContextTest" angle="90" axiom="FX" >
+    <rule var="X">
+      <case prob="0.5" result="X+YF+" left="Y" right="Z" default="X" />
+    </rule>
+  </lsys>
+
   <lsys name="DragonCurve" angle="90" axiom="FX" >
     <rule var="X">
-      <case prob="1" result="X+YF+"/>
+      <case result="X+YF+"/>
     </rule>
 
     <rule var="Y">
-      <case prob="1" result="-FX-Y" />
+      <case result="-FX-Y" />
     </rule>
   </lsys>
 
   <lsys name="DragonTetra" angle="120" axiom="F" >
     <rule var="F">
-      <case prob="1" result="F+F-F"/>
+      <case result="F+F-F"/>
     </rule>
   </lsys>
 
   <lsys name="DragHiway" angle="45" axiom="X" >
     <rule var="X">
-      <case prob="1" result="X+F+Y"/>
+      <case result="X+F+Y"/>
     </rule>
 
     <rule var="Y">
-      <case prob="1" result="X-F-Y"/>
+      <case result="X-F-Y"/>
     </rule>
   </lsys>
 
   <lsys name="SierTri" angle="120" axiom="F-G-G" >
     <rule var="F">
-      <case prob="1" result="F-G+F+G-F"/>
+      <case result="F-G+F+G-F"/>
     </rule>
 
     <rule var="G">
-      <case prob="1" result="GG"/>
+      <case result="GG"/>
     </rule>
   </lsys>
 
   <lsys name="SierCarpet" angle="90" axiom="F" >
     <rule var="F">
-      <case prob="1" result="F+F-F-F-G+F+F+F-F"/>
+      <case result="F+F-F-F-G+F+F+F-F"/>
     </rule>
 
     <rule var="G">
-      <case prob="1" result="G"/>
+      <case result="G"/>
     </rule>
   </lsys>
 
   <lsys name="SierTriApprox" angle="60" axiom="F" >
     <rule var="F">
-      <case prob="1" result="+G-F-G+"/>
+      <case result="+G-F-G+"/>
     </rule>
 
     <rule var="G">
-      <case prob="1" result="-F+F+F-"/>
+      <case result="-F+F+F-"/>
     </rule>
   </lsys>
 
   <lsys name="SierCurve" angle="90" axiom="A--F--A--F" >
     <rule var="A">
-      <case prob="1" result="+B-F-B+"/>
+      <case result="+B-F-B+"/>
     </rule>
 
     <rule var="B">
-      <case prob="1" result="-A+F+A-"/>
+      <case result="-A+F+A-"/>
     </rule>
   </lsys>
 
   <lsys name="KochSnowflake" angle="60" axiom="F++F++F" >
     <rule var="F">
-      <case prob="1" result="F-F++F-F"/>
+      <case result="F-F++F-F"/>
     </rule>
 
     <rule var="X">
-      <case prob="1" result="FF"/>
+      <case result="FF"/>
     </rule>
   </lsys>
 
   <lsys name="KochSnowCurve" angle="60" axiom="F" >
     <rule var="F">
-      <case prob="1" result="F+F--F+F "/>
+      <case result="F+F--F+F "/>
     </rule>
   </lsys>
 
   <lsys name="KochCurve" angle="90" axiom="F" >
     <rule var="">
-      <case prob="1" result="F+F-F-F+F"/>
+      <case result="F+F-F-F+F"/>
     </rule>
   </lsys>
 
   <lsys name="KochIsland" angle="90" axiom="XYXYXYX+XYXYXYX+XYXYXYX+XYXYXYX" >
     <rule var="F">
-      <case prob="1" result=""/>
+      <case result=""/>
     </rule>
 
     <rule var="X">
-      <case prob="1" result="FX+FX+FXFY-FY-"/>
+      <case result="FX+FX+FXFY-FY-"/>
     </rule>
 
     <rule var="Y">
-      <case prob="1" result="+FX+FXFY-FY-FY"/>
+      <case result="+FX+FXFY-FY-FY"/>
     </rule>
   </lsys>
 
   <lsys name="CesaroFractal" angle="85" axiom="F" >
     <rule var="F">
-      <case prob="1" result="F+F-F-F+F"/>
+      <case result="F+F-F-F+F"/>
     </rule>
   </lsys>
 
   <lsys name="FractalTree" angle="45" axiom="L" >
     <rule var="F">
-      <case prob="1" result="FF"/>
+      <case result="FF"/>
     </rule>
 
     <rule var="X">
-      <case prob="1" result="F[+X]-X"/>
+      <case result="F[+X]-X"/>
     </rule>
   </lsys>
 
   <lsys name="FractalPlant" angle="25" axiom="X" >
     <rule var="X">
-      <case prob="1" result="#0 F-[ #2 [X]+ #3 X]+ #1F [ #3 +FX]-X"/>
+      <case result="#0 F-[ #2 [X]+ #3 X]+ #1F [ #3 +FX]-X"/>
     </rule>
 
     <rule var="F">
-      <case prob="1" result="FF"/>
+      <case result="FF"/>
     </rule>
   </lsys>
 
   <lsys name="BushPlant" angle="22" axiom="F" >
     <rule var="F">
-      <case prob="1" result="#0 FF-[ #1 -F+F+F]+[ #2 +F-F-F]"/>
+      <case result="#0 FF-[ #1 -F+F+F]+[ #2 +F-F-F]"/>
     </rule>
   </lsys>
 
   <lsys name="TreePlant" angle="25" axiom="FG" >
     <rule var="F">
-      <case prob="1" result="#0 FF-[ #1 -F+F]+[ #2 +F-F]"/>
+      <case result="#0 FF-[ #1 -F+F]+[ #2 +F-F]"/>
     </rule>
 
     <rule var="G">
-      <case prob="1" result="#0 FF+[ #1 +F]+[ #3 -F]"/>
+      <case result="#0 FF+[ #1 +F]+[ #3 -F]"/>
     </rule>
   </lsys>
 
   <lsys name="VinePlant" angle="27" axiom="F" >
     <rule var="F">
-      <case prob="1" result="#0 FF[ #1 -F++F][ #2 +F--F] #3 ++F--F "/>
+      <case result="#0 FF[ #1 -F++F][ #2 +F--F] #3 ++F--F "/>
     </rule>
   </lsys>
 
   <lsys name="Weed1" angle="20" axiom="#4 F" >
     <rule var="F">
-      <case prob="1" result="F[+F]F[-F][F]"/>
+      <case result="F[+F]F[-F][F]"/>
     </rule>
   </lsys>
 
   <lsys name="Weed2" angle="25" axiom="#4 X" >
     <rule var="X">
-      <case prob="1" result="F[+X][-X]FX"/>
+      <case result="F[+X][-X]FX"/>
     </rule>
 
     <rule var="F">
-      <case prob="1" result="FF"/>
+      <case result="FF"/>
     </rule>
   </lsys>
 
   <lsys name="Weed3" angle="30" axiom="#4 F" >
       <rule var="F">
-        <case prob="1" result="F[+F[+F][-F]F][-F[+F][-F]F]F[+F][-F]F"/>
+        <case result="F[+F[+F][-F]F][-F[+F][-F]F]F[+F][-F]F"/>
       </rule>
     </lsys>
 
   <lsys name="Weed4" angle="25" axiom="#4 Y" >
     <rule var="F">
-      <case prob="1" result=""/>
+      <case result=""/>
     </rule>
 
     <rule var="X">
-      <case prob="1" result="X[-FFF][+FFF]FX"/>
+      <case result="X[-FFF][+FFF]FX"/>
     </rule>
 
     <rule var="Y">
-      <case prob="1" result="YFX[+Y][-Y]"/>
+      <case result="YFX[+Y][-Y]"/>
     </rule>
   </lsys>
 
   <lsys name="Fern" angle="7.2" axiom=" #3 +++++++++++++X" >
     <rule var="X">
-      <case prob="1" result="F[@0.5+++++++++X]-F[@0.4-----------X]@0.6X"/>
-      <!-- NOTE: There is supposed to be a '!' at this point   ^  but it looks better without it -->
+      <case result="F[@0.5+++++++++X]-F[@0.4-----------X]@0.6X"/>
     </rule>
   </lsys>
 
@@ -205,175 +210,175 @@
 
   <lsys name="LevyCurve" angle="45" axiom="F" >
     <rule var="F">
-      <case prob="1" result="+F--F+"/>
+      <case result="+F--F+"/>
     </rule>
   </lsys>
 
   <lsys name="LevyTapestry" angle="45" axiom="F++F++F++F" >
     <rule var="F">
-      <case prob="1" result="+F--F+"/>
+      <case result="+F--F+"/>
     </rule>
   </lsys>
 
   <lsys name="HilbertCurve" angle="90" axiom="A" >
     <rule var="A">
-      <case prob="1" result="-BF+AFA+FB-"/>
+      <case result="-BF+AFA+FB-"/>
     </rule>
 
     <rule var="B">
-      <case prob="1" result="+AF-BFB-FA+"/>
+      <case result="+AF-BFB-FA+"/>
     </rule>
   </lsys>
 
   <lsys name="PeanoCurve" angle="90" axiom="F" >
     <rule var="F">
-      <case prob="1" result="F-F+F+F+F-F-F-F+F"/>
+      <case result="F-F+F+F+F-F-F-F+F"/>
     </rule>
   </lsys>
 
   <lsys name="PentaTessel" angle="72" axiom="F-F-F-F-F" >
     <rule var="F">
-      <case prob="1" result="F-F++F+F-F-F"/>
+      <case result="F-F++F+F-F-F"/>
     </rule>
   </lsys>
 
   <lsys name="BoxCurve" angle="90" axiom="F-F-F-F" >
     <rule var="">
-      <case prob="1" result="F-F+F+F-F"/>
+      <case result="F-F+F+F-F"/>
     </rule>
   </lsys>
 
   <lsys name="MooreCurve" angle="90" axiom="AFA+F+AFA" >
     <rule var="A">
-      <case prob="1" result="-BF+AFA+FB-"/>
+      <case result="-BF+AFA+FB-"/>
     </rule>
 
     <rule var="B">
-      <case prob="1" result="+AF-BFB-FA+"/>
+      <case result="+AF-BFB-FA+"/>
     </rule>
   </lsys>
 
   <lsys name="GosperCurve" angle="60" axiom="G" >
     <rule var="F">
-      <case prob="1" result="F-G--G+F++FF+G-"/>
+      <case result="F-G--G+F++FF+G-"/>
     </rule>
 
     <rule var="G">
-      <case prob="1" result="+F-GG--G-F++F+G"/>
+      <case result="+F-GG--G-F++F+G"/>
     </rule>
   </lsys>
 
   <lsys name="DekkingChruch" angle="90" axiom="WZYX" >
     <rule var="W">
-      <case prob="1" result="FW+F-XFW-F+Z"/>
+      <case result="FW+F-XFW-F+Z"/>
     </rule>
 
     <rule var="X">
-      <case prob="1" result="++F--Y-F+Z++F--Y-F+Z"/>
+      <case result="++F--Y-F+Z++F--Y-F+Z"/>
     </rule>
 
     <rule var="Y">
-      <case prob="1" result="++F--Y+F-X"/>
+      <case result="++F--Y+F-X"/>
     </rule>
 
     <rule var="Z">
-      <case prob="1" result="FW+F-X"/>
+      <case result="FW+F-X"/>
     </rule>
 
   </lsys>
 
   <lsys name="PentiveTri" angle="36" axiom="V" >
     <rule var="F">
-      <case prob="1" result=""/>
+      <case result=""/>
     </rule>
 
     <rule var="U">
-      <case prob="1" result="--FW++++FX--FZ"/>
+      <case result="--FW++++FX--FZ"/>
     </rule>
 
     <rule var="V">
-      <case prob="1" result="FY++FW----FX++"/>
+      <case result="FY++FW----FX++"/>
     </rule>
 
     <rule var="W">
-      <case prob="1" result="++FU----FV++FY"/>
+      <case result="++FU----FV++FY"/>
     </rule>
 
     <rule var="X">
-      <case prob="1" result="FZ--FU++++FV--"/>
+      <case result="FZ--FU++++FV--"/>
     </rule>
 
     <rule var="Y">
-      <case prob="1" result="+FZ--FU+"/>
+      <case result="+FZ--FU+"/>
     </rule>
 
     <rule var="Z">
-      <case prob="1" result="-FV++FY-"/>
+      <case result="-FV++FY-"/>
     </rule>
   </lsys>
 
   <lsys name="TriGrid" angle="60" axiom="X" >
     <rule var="F">
-      <case prob="1" result=""/>
+      <case result=""/>
     </rule>
 
     <rule var="X">
-      <case prob="1" result="FY[+FY][--FY]FY"/>
+      <case result="FY[+FY][--FY]FY"/>
     </rule>
 
     <rule var="Y">
-      <case prob="1" result="FX[++FX][-FX]FX"/>
+      <case result="FX[++FX][-FX]FX"/>
     </rule>
   </lsys>
 
   <lsys name="HexGrid" angle="60" axiom="F" >
     <rule var="F">
-      <case prob="1" result="-F+F+G[+F+F]-"/>
+      <case result="-F+F+G[+F+F]-"/>
     </rule>
 
     <rule var="G">
-      <case prob="1" result="GG"/>
+      <case result="GG"/>
     </rule>
   </lsys>
 
   <lsys name="Penrose" angle="36" axiom="[H]++[H]++[H]++[H]++[H]" >
     <rule var="F">
-      <case prob="1" result=""/>
+      <case result=""/>
     </rule>
 
     <rule var="G">
-      <case prob="1" result="IF++JF----HF[-IF----GF]++"/>
+      <case result="IF++JF----HF[-IF----GF]++"/>
     </rule>
 
     <rule var="H">
-      <case prob="1" result="+IF--JF[---GF--HF]+"/>
+      <case result="+IF--JF[---GF--HF]+"/>
     </rule>
 
     <rule var="I">
-      <case prob="1" result="-GF++HF[+++IF++JF]-"/>
+      <case result="-GF++HF[+++IF++JF]-"/>
     </rule>
 
     <rule var="J">
-      <case prob="1" result="--IF++++GF[+JF++++HF]--HF"/>
+      <case result="--IF++++GF[+JF++++HF]--HF"/>
     </rule>
 
   </lsys>
 
   <lsys name="SpokeTri" angle="30" axiom="W" >
     <rule var="W">
-      <case prob="1" result="+++X--F--ZFX+"/>
+      <case result="+++X--F--ZFX+"/>
     </rule>
 
     <rule var="X">
-      <case prob="1" result="---W++F++YFW-"/>
+      <case result="---W++F++YFW-"/>
     </rule>
 
     <rule var="Y">
-      <case prob="1" result="+ZFX--F--Z+++"/>
+      <case result="+ZFX--F--Z+++"/>
     </rule>
 
     <rule var="Z">
-      <case prob="1" result="-YFW++F++Y---"/>
+      <case result="-YFW++F++Y---"/>
     </rule>
   </lsys>
 
@@ -386,17 +391,17 @@
 
   <lsys name="Untitled_1" angle="90" axiom="F" >
     <rule var="F">
-      <case prob="1" result="+F+F-F-F+F+F+F-F-F+F"/>
+      <case result="+F+F-F-F+F+F+F-F-F+F"/>
     </rule>
   </lsys>
 
   <lsys name="Alien" angle="360/11" axiom="X" >
     <rule var="X">
-      <case prob="1" result="[@Q2 @I2-FX] K [@Q2@I2---FX]"/>
+      <case result="[@Q2 @I2-FX] K [@Q2@I2---FX]"/>
     </rule>
 
     <rule var="F">
-      <case prob="1" result=""/>
+      <case result=""/>
     </rule>
   </lsys>
 

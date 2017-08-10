@@ -12,7 +12,7 @@ Each lsys has attributes <name>, <angle>, and <axiom> tags which directly corres
 that will be fed into the internal representation of the lsys.
 
 Notes:
-    <axiom> tags are assumed to contain only recognized symbols.
+    axiom attributes are assumed to contain only recognized symbols.
         See docstring of main.py for valid symbols. Don't try your luck with non-Ascii chars.
 
 
@@ -24,11 +24,12 @@ of '1', as each variable maps directly to a single, unchanging resultant string.
 that the file will be quite verbose, but this verbosity is to accomodate probabalistic grammars, and, frankly, is
 the best I could come up with at the time.
 
-The probabilities (<prob>) of each case within a given rule are assumed to add up to 1, but there is no check in place
-to ensure that this is the case.
+The probabilities (prob) of each case within a given rule are assumed to be 1, but can be specified to be
+any float or fraction. Note: These floats / fractions should add up to 1. An error will be thrown by
+numpy unless an lsys object is run under these conditions
 
 Each rule is defined by the variable token that it transforms. Thus each rule has an attribute that identifies
-this variable (<var>).
+this variable (var).
 
 Note: If you'd like to map a variable to nothing, then the <result> tag must have at least a space character
 between the tags.
@@ -39,8 +40,7 @@ Generic root tag (named 'data'), then one tag for each lsys. Of the form:
 <data>
     <lsys name="default_name" angle="90" axiom="ABC" >
         <rule var="F">
-            <context left="*" right="*" />
-            <case prob="1/3" result="F++F++F++F"/>
+            <case prob="1/3" result="F++F++F++F" left="/*" right="/*" />
             <case prob="0.5" result="F++F++F++F"/>
 
             ...
@@ -93,18 +93,30 @@ def getLsysFromFile( filename ):
             ruleObject = getRule()
 
             key = rule.attrib["var"]
-            value = ( [], [] )
+            cases = ( [], [], [] )
 
             for field in rule:
                 if field.tag == "case":
-                    value[1].append( float( fractions.Fraction( field.attrib["prob"] ) ) )
-                    value[0].append( field.attrib["result"].replace(" ", "") )
 
-                elif field.tag == "context":
-                    l.rightcontext = field.attrib["right"]
-                    l.leftcontext = field.attrib["left"]
+                    # Assume Probability is '1' unless otherwise specified
+                    try:
+                        cases[1].append( float( fractions.Fraction( field.attrib["prob"] ) ) )
+                    except KeyError:
+                        cases[1].append( 1.0 )
 
-            ruleObject.cases = value
+                    cases[0].append( field.attrib["result"].replace(" ", "") )
+
+                    # Assume context is not sensitive unless otherwise specified
+                    try:
+                        l.rightcontext = field.attrib["right"]
+                    except KeyError:
+                        l.rightcontext = "/*"
+                    try:
+                        l.leftcontext = field.attrib["left"]
+                    except KeyError:
+                        l.leftcontext = "/*"
+
+            ruleObject.cases = cases
             ruleset[key] = ruleObject
 
         l.ruleset = ruleset
@@ -114,7 +126,7 @@ def getLsysFromFile( filename ):
 def getColors( filename ):
     """ Open colors.xml and make a map of color id's to color strings.
         A color string can be either the color name or a hex string:
-            Hex string -> '#00ccff'
+            Hex string -> '#00ccff'     (include the octothorpe)
             Color Name -> 'Red'
     """
 
