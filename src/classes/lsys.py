@@ -20,7 +20,7 @@ produce fractal images. L-Systems have:
     An Axiom: A symbol or string of symbols that represents the initial state of the system
 
     A Symbol is a string token, and are either:
-        A Constant: symbol which is not mapped to any string by the ruleset, and is therefore never changed once created
+        A Constant: symbol which is not mapped to any string by the ruleset, and is therefore never changed
         A Variable: symbol which is mapped to a resultant string of other symbols in some way.
         There's no hard and fast trait that defines a symbol as a constant or variable within this L-System alphabet.
         i.e. Symbols are constant or vary by convention; this distinction is not specified in this system.
@@ -64,26 +64,28 @@ class lsys( object ):
         self.angle = angle
         self.axiom = axiom
         self.ruleset = ruleset
+        self.vars = []
         self.alphabet = self.genAlphabet()
 
     def __repr__( self ):
         """ Create and return the string representation of an lsys object """
-        result = "Name: {0}\nAngle: {1} degrees\nAlphabet: {2}\nAxiom: {3}\nRules:\n{4}"
+        result = "Name: {0}\nAngle: {1} degrees\nAlphabet: {2}\nAxiom: {3}\n{4}"
 
         rule_string = ""
-        for key in self.ruleset.keys():
-            rule = self.ruleset[key]
+        for var in self.ruleset.keys():
+            rule = self.ruleset[var]
+            for context in rule.productions.keys():
+                left_context = ("" if context.left == "/*" else "{} < ".format(context.left))
+                right_context = ("" if context.right == "/*" else " > {}".format(context.right))
 
-            if len(rule.cases[0]) > 1:
-                trans = ""
-                for i in range(len(rule[0])):
-                    trans += "\t({}%) {}\n".format( round(rule[1][i] * 100, 2), rule[0][i] )
-            else:
-                trans = "{}\n".format( rule.cases[0][0] )
-            rule_string += " {} -> {}".format(key, trans)
+                cases = rule.productions[context]
+                case_string = ""
+                for i in range(len(cases.results)):
+                    probability_string = "" if cases.probabilities[i] == 1 else "({}%) ".format(round(cases.probabilities[i] * 100, 2))
+                    case_string += "{}{}; ".format( probability_string, cases.results[i])
 
-            if rule.isContextSensitive():
-                rule_string += " if {} < {} > {}".format(rule.rcontext, rule.var, rule.lcontext)
+                rule_string += "{0}{1}{2} -> {3}\n".format(left_context, var, right_context, case_string)
+
 
         if len(self.alphabet) == 0:
             self.alphabet = self.genAlphabet()
@@ -94,16 +96,25 @@ class lsys( object ):
 
         return result.format( self.name, self.angle, alphabet_string, self.axiom, rule_string )
 
+    def getVars(self):
+        """ Return every variable associated with this lsys. """
+        if self.vars == []:
+            for var in self.ruleset.keys():
+                self.vars += var
+        return self.vars
+
     def genAlphabet(self):
         """ Create and return the alphabet of this lsys"""
         result = []
-        for key in self.ruleset.keys():
-            if key not in result:
-                result.append(key)
-            for string in self.ruleset[key].cases[0]:
-                for token in string:
-                    if token not in result:
-                        result.append(token)
+        for var in self.ruleset.keys():
+            if var not in result:
+                result.append(var)
+            for context in self.ruleset[var].productions.keys():
+                cases = self.ruleset[var].productions[context]
+                for string in cases.results:
+                    for symbol in string:
+                        if symbol not in result:
+                            result.append(symbol)
         return result
 
     def isComplete(self):
@@ -119,49 +130,14 @@ class lsys( object ):
     def isContextSensitive(self):
         return False
 
-    def getResult( self, var, ltoken, rtoken ):
+    def getResult( self, var, left_token, right_token ):
         """ Get the resultant string, given the right and left tokens
         var - A variable symbol in this lsys' alphabet
         rotken - A symbol in the lsys' alphabet, to the right of 'var'
         ltoken - A symbol in the lsys' alphabet, to the left of 'var'
         """
-        return self.ruleset[var].getResult( rtoken, ltoken )
+        return self.ruleset[var].getResult( left_token, right_token )
 
 def createLsys():
     """ Create and return an lsys with default params """
     return lsys( str(), int(), str(), dict() )
-
-def genStringIter( l, n ):
-    """
-    Generate a symbol string that can be read and interpreted as turtle commands
-    Iterative, see main.py for the recursive version, entitled: 'runLsys'
-    Takes a long time
-    """
-
-    if not isinstance( l, lsys ):
-        raise IOError( "'l' param not lsys object" )
-    if not isinstance( n, int ) or n < 0:
-        raise IOError( "'n' param not positive integer" )
-
-    string = l.getAxiom()
-    result = string
-    for i in range( n ):
-        for char in string:
-            result += l.getRuleset()[char]
-        string = result
-    return result
-
-def genStringRec( l, n ):
-    """ Returns a string using recursion """
-    return genStringRecHelper( l, l.axiom, n )
-
-def genStringRecHelper( l, s, n ):
-
-    result = ""
-
-    for char in s:
-        if n <= 0 or char not in l.ruleset.keys():
-            result += char
-        else:
-            result += genStringRecHelper( l, l.ruleset( char ), n-1 )
-    return result

@@ -57,15 +57,6 @@ except FileNotFoundError:
 except ValueError:
     COLORS = None
 
-
-def turtleInit():
-    """ Initialize the turtle module """
-    t.setup()
-    t.tracer(False) # Refresh the drawing manually, must use turtle.update() at the end
-    t.hideturtle()
-    t.setworldcoordinates( -300, -300, 300, 300 ) # NOTE: This may cause problems on different resolutions
-    t.reset()
-
 def chooseAction( token, size, angle ):
     """
     Determine which turtle action to use.
@@ -120,7 +111,12 @@ def runLsys( l, n, s ):
     if not STACK.isEmpty():
         STACK = getStack()
 
-    turtleInit()
+    t.setup()
+    t.tracer(False) # Refresh the drawing manually, must use turtle.update() at the end
+    t.hideturtle()
+    t.setworldcoordinates( -300, -300, 300, 300 ) # NOTE: This may cause problems on different resolutions
+    t.reset()
+
     print("The image is being generated. This may or may not take a while.")
 
     try:
@@ -131,7 +127,6 @@ def runLsys( l, n, s ):
 
     except RecursionError:
         print("A Stack Overflow Error occurred; try again w/ fewer iterations.")
-        return
 
 def runLsysHelper( string, l, depth, size ):
     """
@@ -182,7 +177,7 @@ def runLsysHelper( string, l, depth, size ):
                 size_multiplier = float( s[0:] )
 
         # Character must correspond to some executable action
-        elif depth <= 0 or char not in l.ruleset.keys():
+        elif depth <= 0 or char not in l.getVars():
             chooseAction( char, size * size_multiplier, l.angle )
 
         # Otherwise recurse with a rule string

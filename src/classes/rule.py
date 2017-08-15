@@ -44,9 +44,18 @@
         A(4,4)
         A(6,6), etc.
 
+    The Rule object has a few fields.
+    var - The variable that the rule will determine the transformation of.
+    productions - A dicitonary which maps 'contexts' to 'cases'
+
 """
 
+#from classes.cases import *
+#from classes.context import *
 import re
+import numpy
+
+DEFAULT_RESULT_STRING = ""
 
 try:
     import numpy            # For choosing symbol string with weighted probabilities
@@ -55,45 +64,33 @@ except ImportError:
 
 class rule( object ):
 
-    def __init__(self, var, cases, rcontext, lcontext):
+    def __init__(self, var):
 
         assert isinstance( var, str )
-        assert isinstance( cases, tuple )
-        assert isinstance( rcontext, str )
-        assert isinstance( lcontext, str )
+
 
         self.var = var
-        self.cases = cases
-        self.rcontext = rcontext
-        self.lcontext = lcontext
+        self.productions = dict()
 
     def __repr__(self):
-        result = "{} -> ".format( self.var )
+        return "Rule: TODO"
 
-        if len(cases[0]) > 1:
-            for i in range(len(self.cases[0])):
-                result += "\t({}%) {}\n".format( round(cases[1][i] * 100, 2) , cases[0][i] )
-        else:
-            result = "{} -> {}".format(self.var, self.cases[0][0])
-        return result
-
-    def getResult(self, ltoken, rtoken):
+    def getResult(self, left_token, right_token):
         """ Get the string output (result) associated with this rule """
 
-        try:
-            #(self.lcontext is "*" and self.rcontext is "*") or \
-            if (re.match( rcon, self.rcontext ) and re.match( lcon, lcontext )):
-                return numpy.random.choice( self.cases[0], 1, True, self.cases[1] ).tolist()[0]
-            else:
-                return ""
-        except NameError:
-            return self.cases[0][0]
-        #except sre_constants.error:
-            #print("Error: Invalid regular expression")
-            #print("{}", self)
+        for context in self.productions.keys():
+            cases = self.productions[context]
+
+            if (re.match(context.left, left_token) is not None) and (re.match(context.right, right_token) is not None):
+                # Note: numpy.random.choice always returns a list
+                return numpy.random.choice( cases.results, 1, p=cases.probabilities )[0]
+        return DEFAULT_RESULT_STRING
 
     def isContextSensitive(self):
-        return self.rcontext != "\*" and self.lcontext != "\*"
+        for context in self.productions.keys():
+            if context.right is not "/*" and context.left is not "/*":
+                return False
+        return True
 
 def getRule():
-    return rule( str(), tuple(), "\*", "\*" )
+    return rule( str() )

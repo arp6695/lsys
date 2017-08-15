@@ -2,9 +2,21 @@
 
 <data>
 
-  <lsys name="ContextTest" angle="90" axiom="FX" >
-    <rule var="X">
-      <case prob="0.5" result="X+YF+" left="Y" right="Z" default="X" />
+  <lsys name="ContextTest" angle="90" axiom="A" >
+    <rule var="A">
+
+      <case prob="0.75" result="ABC" />
+      <case prob="0.25" result="DEF" />
+
+      <context left="B" right="C">
+        <case prob="0.5" result="GHI" />
+        <case prob="0.5" result="JKL" />
+      </context>
+
+      <context left="/*" right="D">
+        <case result="XYZ" />
+      </context>
+
     </rule>
   </lsys>
 
