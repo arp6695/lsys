@@ -8,6 +8,7 @@ Goto 1
 
 The alphabet has preset tokens that automatically correspond to turtle actions:
     'F' 'G' 'H' 'I' 'J' - Forward by a given unit (Draw)
+    'f' 'g' 'h' 'i' 'j' - Forward by a given unit (Do not draw)
     'K' - Forward by a given unit (Does not Draw)
     'L' - Leaf - Forward, w/ two 'leaves'
     '+' - Left by the lsys' angle
@@ -70,6 +71,10 @@ def chooseAction( token, size, angle ):
     # Defaults
     if token in "FGHIJ":
         t.forward( size )
+    elif token in "fjhij":
+        t.up()
+        t.forward( size )
+        t.down()
     elif token == "-":
         t.right( angle )
     elif token == "+":

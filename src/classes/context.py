@@ -2,6 +2,7 @@
     context.py
     By: Alex Piazza
     Encapsulate two string symbols, left and right contexts
+    Used to support context-sensitive grammars.
 """
 
 class context(object):

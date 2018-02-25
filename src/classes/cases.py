@@ -2,6 +2,7 @@
     cases.py
     By: Alex Piazza
     Encapsulate string results and respective probabilities
+    Used to support Stochastic grammars.
 """
 
 class cases(object):

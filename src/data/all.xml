@@ -417,4 +417,31 @@
     </rule>
   </lsys>
 
+  <lsys name="Islands" angle="90" axiom="F+F+F+F" >
+    <rule var="F">
+      <case result="F+f-FF+F+FF+Ff+FF-f+FF-F-FF-Ff-FFF" />
+    </rule>
+    <rule var="f">
+      <case result="ffffff"/>
+    </rule>
+  </lsys>
+
+  <lsys name="Spirals" angle="90" axiom="F-F-F-F" >
+    <rule var="F">
+      <case result="FF-F-F-F-F-F+F" />
+    </rule>
+  </lsys>
+
+  <lsys name="Carpet2" angle="90" axiom="F-F-F-F" >
+    <rule var="F">
+      <case result="FF-F-F-F-FF" />
+    </rule>
+  </lsys>
+
+  <lsys name="Grid_Asym" angle="90" axiom="F-F-F-F" >
+    <rule var="F">
+      <case result="FF-F+F-F-FF" />
+    </rule>
+  </lsys>
+
 </data>

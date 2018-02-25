@@ -7,13 +7,13 @@
     'Rules' generally describe the way a variable is transformed into symbol strings on an iteration by iteration basis.
     There are many ways that a variable can be mapped to resultant strings, a few ways are described below.
 
-    - Deterministically -
+- Deterministically -
     This is the most strightforward: Each variable maps to a single result string which is always used to suppliment the
     variable during the transformation. Most of the already implemented L-Systems in all.xml are deterministic.
     These are called 'deterministic' because the result yielded by a variable is determined and never changes.
     Ex. 'A' -> 'ABC'
 
-    - Stochastically -
+- Stochastically -
     This is a variation one the idea of a deterministic L-Systems. With this, a variable maps to more than one result
     string, and the result string that will be used is randomly chosed from one of the many results. Each result has a
     weighted probability associated with it, so that some results will be chosen more/less frequently than others.
@@ -24,34 +24,34 @@
     Ex. 'A' -> 'ABC' (100%)
 
 
-    - Context-Sensitive -
+- Context-Sensitive -
     This is also an extension on Stochastic L-Systems. A variable will map to many result strings, but the result will
     be chosen depending on the variable's neighboring symbols. Consider the axiom 'ABC'. Given a rule for 'B', say
     'B' -> 'A' only if 'A < B > C' will map the variable 'B' to 'A' if, and only if, 'A' is a symbol to the left of 'B',
     and 'C' is a symbol to the right of 'B', otherwise 'B' implicitly maps to nothing.
     Ex. 'B' -> 'A' only if 'A < B > C'
 
-    - Parametrically -
+- Parametrically -
 
-    :NOTE: This has yet to be implemented :NOTE:
+:NOTE: This has yet to be implemented :NOTE:
 
-    This is by far the most complex L-System grammar. In it, some variables can be assigned parameters. 'A' with parameters
-    'x' and 'y' would resemble 'A(x,y)'. The rules would then map variables with specific parameters to specific result
-    strings, and increment the paramaters in some way. For example, given the axiom 'A(0,0)', there could be a rule:
+    This is by far the most complex L-System grammar. In it, some variables can be assigned parameters. 'A' with
+    parameters 'x' and 'y' would resemble 'A(x,y)'. The rules would then map variables with specific parameters to
+    specific result strings, and increment the paramaters in some way. For example, given the axiom 'A(0,0)', there
+    could be a rule:
     'A(x,y)': x % 2 == 0 -> 'A(x+2, y+2)', which would yield the following sequence of results:
         A(0,0)
         A(2,2)
         A(4,4)
         A(6,6), etc.
 
-    The Rule object has a few fields.
-    var - The variable that the rule will determine the transformation of.
-    productions - A dicitonary which maps 'contexts' to 'cases'
+
+    In this implementation, a rule has 'productions', which map 'context' objects to 'cases' objects.
+    Context objects encapsulate two string, which correspond to the left/right contexts of a given token.
+    Cases objects encapsulate a list of result strings and it's respective probability mask.
 
 """
 
-#from classes.cases import *
-#from classes.context import *
 import re
 import numpy
 
