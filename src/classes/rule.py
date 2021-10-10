@@ -53,7 +53,6 @@
 """
 
 import re
-import numpy
 
 DEFAULT_RESULT_STRING = ""
 

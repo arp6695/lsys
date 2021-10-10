@@ -149,7 +149,7 @@ def runLsysHelper( string, l, depth, size ):
     for i in range(len(string)):
         char = string[i]
 
-        if char is "#":
+        if char == "#":
             id = ""
             i += 1
             while string[i].isdigit():
@@ -166,7 +166,7 @@ def runLsysHelper( string, l, depth, size ):
 
 
         # Modify size multiplier by reading remaining string
-        elif char is "@":
+        elif char == "@":
             s = ""
             i += 1
 
