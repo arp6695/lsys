@@ -21,8 +21,8 @@ class Probability(object):
 
 class ProbabilityMask(object):
 
-    """ Constructor """
     def __init__(self, elemlist=[], problist=[]):
+        """ Constructor, May be initialized using a list of elements and their respective probabilities. """
         random.seed( SEED )
         self.mask = list()
         if len(elemlist) != len(problist): 
@@ -31,26 +31,25 @@ class ProbabilityMask(object):
         for i in range(len(elemlist)):
             self.mask.append( Probability(elemlist[i], problist[i]) )
     
-    """ Explicitly add an outcome and it's probability """
     def add(self, elem, prob):
+        """ Explicitly add an outcome and it's probability """
         self.mask.append( (elem, prob) )
 
-    """ Return whether this object is populated with values or not. """
     def isEmpty(self):
+        """ Return whether this object is populated with values or not. """
         return len(self.mask) == 0
 
-    """ Check that the probabilities add up to 1. Unvalidated masks will not have correct probability distributions. """
     def validate(self):
+        """ Check that the probabilities add up to 1. Unvalidated masks will not have correct probability distributions. """
         if self.isEmpty(): return False
-        
+
         sum = 0
         for item in self.mask:
             sum += item[1]
         return sum == 1
 
-    """ Return an outcome based on the probabilities in the mask """
     def roll(self):
-        # Roll a random number, then compare where it falls in all the probabilities.
+        """ Return an outcome based on the probabilities in the mask """
         roll = random.random()
         sum = 0
         for item in self.mask:
@@ -58,20 +57,24 @@ class ProbabilityMask(object):
             if sum >= roll: return item[0]
         return None
 
-    """ Use print-friendly string rep """
     def __str__(self):
+        """ Use print-friendly string rep """
         return self.printable()
 
     """ Return a stdout-friendly version of the mask """
-    def printable(self):
+    def asPrintString(self):
         result = str()
         for item in self.mask:
             result += f"{item[0]}: {item[1] * 100}%\n"
         return result
 
-    """ Return a parser-friendly string representation """
-    def asString(self):
-        pass # TODO
+    def asParseString(self):
+        """ Return a parser-friendly string representation """
+        result = ""
+        format = "<case prob=\"{0}\" result=\"{1}\">\n"
+        for item in self.mask:
+            result += format.format( item.prob, item.elem )
+
 
 
 

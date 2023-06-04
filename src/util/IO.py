@@ -72,7 +72,6 @@ Note: Probabilities for probabalistic rules should be floats that add up to 1, b
 
 from classes.lsys import *              # For creating lsys objects
 from classes.rule import *              # For creating Rule Objects
-from classes.cases import *
 from classes.context import *
 from util.probmask import *
 
@@ -105,9 +104,7 @@ def getLsysFromFile( filename ):
         # Iterate thru all rules
         for rule in child:
 
-            ruleObject = getRule()
-            var = rule.attrib["var"]
-            cases = getCases()
+            ruleObject = Rule(rule.attrib["var"])
 
             # Field will be either 'case' or 'context'
             # 'case' will be assumed to be context-free
@@ -118,13 +115,10 @@ def getLsysFromFile( filename ):
 
                     # Assume Probability is '1' unless otherwise specified
                     try:
-                        cases.probabilities.append( float( fractions.Fraction( field.attrib["prob"] ) ) )
                         ruleObject.mask.add( field.attrib["result"].replace(" ", ""), float( fractions.Fraction( field.attrib["prob"] ) ) ) 
                     except KeyError:
-                        cases.probabilities.append( 1.0 )
                         ruleObject.mask.add( field.attrib["result"].replace(" ", ""), 1.0 ) 
 
-                    cases.results.append( field.attrib["result"].replace(" ", "") )
 
                     # Assume context is not sensitive unless otherwise specified
                     try:
@@ -137,44 +131,18 @@ def getLsysFromFile( filename ):
                         l.leftcontext = "/*"
 
 
+                # TODO: Handle context-sensitive grammars
+                """
                 if field.tag == "context":
                     (context, case) = getContextAndCases( field )
                     ruleObject.productions[context] = case
+                """
 
-            ruleObject.productions[getContext()] = cases
-            ruleset[var] = ruleObject
+            ruleset[ruleObject.token] = ruleObject
 
         l.ruleset = ruleset
         result.append( l )
     return result
-
-def getContextAndCases( context_node ):
-    """ Helper function for getLsysFromFile
-        context_node - Child from 'ElementTree' with the tag 'context'
-        Returns a context/case tuple
-    """
-    context = getContext()
-    cases = getCases()
-
-    try:
-        context.right = context_node.attrib["right"]
-    except KeyError:
-        context.right = "/*"
-    try:
-        context.left = context_node.attrib["left"]
-    except KeyError:
-        context.left = "/*"
-
-    for case in context_node:
-        try:
-            cases.probabilities.append( float( fractions.Fraction( case.attrib["prob"] ) ) )
-        except KeyError:
-            cases.probabilities.append( 1.0 )
-
-        cases.results.append( case.attrib["result"].replace(" ", "") )
-
-
-    return (context, cases)
 
 def getColors( filename ):
     """ Open colors.xml and make a map of color id's to color strings.

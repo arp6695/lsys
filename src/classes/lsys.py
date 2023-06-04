@@ -44,9 +44,7 @@ class Lsys( object ):
     """
 
     def __init__( self, name, angle, axiom, ruleset ):
-        """
-        Constructor for the lsys object
-        """
+        """ Constructor for the lsys object """
 
         if not isinstance(axiom, str):
             raise IOError("Axiom must be a string.")

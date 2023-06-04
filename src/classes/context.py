@@ -8,7 +8,7 @@
 class context(object):
 
     def __init__(self, left, right):
-
+        """ Constructor.  """
         assert isinstance(left, str)
         assert isinstance(right, str)
 

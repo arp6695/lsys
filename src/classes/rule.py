@@ -25,6 +25,8 @@
 
 
 - Context-Sensitive -
+:NOTE: This has yet to be implemented :NOTE:
+
     This is also an extension on Stochastic L-Systems. A variable will map to many result strings, but the result will
     be chosen depending on the variable's neighboring symbols. Consider the axiom 'ABC'. Given a rule for 'B', say
     'B' -> 'A' only if 'A < B > C' will map the variable 'B' to 'A' if, and only if, 'A' is a symbol to the left of 'B',
@@ -32,7 +34,6 @@
     Ex. 'B' -> 'A' only if 'A < B > C'
 
 - Parametrically -
-
 :NOTE: This has yet to be implemented :NOTE:
 
     This is by far the most complex L-System grammar. In it, some variables can be assigned parameters. 'A' with
@@ -52,26 +53,30 @@
 
 """
 
-import re
+import re   # For matching context-sensitive tokens
 from util.probmask import ProbabilityMask
 
 DEFAULT_RESULT_STRING = ""
 
-class rule( object ):
+class Rule( object ):
 
-    def __init__(self, var):
+    def __init__(self, token=str() ):
+        """ Constructor. 
+        token - The token that this rule will transform.
+        """
+        assert isinstance( token, str )
 
-        assert isinstance( var, str )
-
-        self.var = var
-        self.productions = dict()
+        self.token = token
         self.mask = ProbabilityMask()
 
     def __repr__(self):
         return "Rule: TODO"
 
-    def getResult(self, left_token, right_token):
-        """ Get the string output (result) associated with this rule """
+    def getResult(self, left_token="", right_token=""):
+        """ Get the string output (result) associated with this rule 
+        left_token  - the token to the left of this token. Context-sensitive grammars override this.
+        right_token - the token to the right of this token. Context-sensitive grammars override this.
+        """
         return self.mask.roll()
                         
     def isStochastic(self):
@@ -79,11 +84,6 @@ class rule( object ):
         return not self.mask.isEmpty()
 
     def isContextSensitive(self):
-        """ Check whetehr this rule is context-sensitive or not """
-        for context in self.productions.keys():
-            if context.right != "/*" and context.left != "/*":
-                return False
-        return True
-
-def getRule():
-    return rule( str() )
+        """ Check whether this rule is context-sensitive or not """
+        # TODO
+        return False
