@@ -13,63 +13,102 @@ import random
 
 SEED = 123456789
 
-""" Helper class which uniquely maps an element to a probability of that element occurring. """
 class Probability(object):
+    """ Helper class which uniquely maps an element to a probability of that element occurring. """
+    
     def __init__(self, elem, prob):
+        """ Constructor
+        Args:
+            elem: The outcome of the rule, if it is applied.
+            prob: The probability that this rule will be applied.
+        """
         self.elem = elem
         self.prob = prob
 
-class ProbabilityMask(object):
 
-    def __init__(self, elemlist=[], problist=[]):
-        """ Constructor, May be initialized using a list of elements and their respective probabilities. """
+class ProbabilityMask(object):
+    def __init__(self, probList=[]):
+        """ Constructor
+
+        Args:
+            probList: list of Probability objects.
+        Returns:
+            ProbabilityMask object.
+        Raises:
+            AttributeError: if probList contains a non-Probability object.
+        """
         random.seed( SEED )
         self.mask = list()
-        if len(elemlist) != len(problist): 
-            raise AttributeError( f"Lengths of lists differ: {len(elemlist)} != {len(problist)}"  )
-
-        for i in range(len(elemlist)):
-            self.mask.append( Probability(elemlist[i], problist[i]) )
+        for prob in probList:
+            if isinstance( prob, Probability ):
+                self.mask.append( prob )
+            else:
+                raise AttributeError( f"Error: Probability list contains non-Probability object: {prob}"  )
     
     def add(self, elem, prob):
-        """ Explicitly add an outcome and it's probability """
-        self.mask.append( (elem, prob) )
+        """ Explicitly add an outcome and it's probability
+        
+        Args:
+            elem: The outcome of the rule, if it is applied.
+            prob: The probability that this rule will be applied.
+        """
+        self.mask.append( Probability(elem, prob) )
 
     def isEmpty(self):
         """ Return whether this object is populated with values or not. """
         return len(self.mask) == 0
 
     def validate(self):
-        """ Check that the probabilities add up to 1. Unvalidated masks will not have correct probability distributions. """
+        """ Check that this probability mask is valid.
+        
+        Returns:
+            True if the probabilities add up to 1.
+            False otherwise.
+        """
         if self.isEmpty(): return False
 
         sum = 0
         for item in self.mask:
-            sum += item[1]
+            sum += item.prob
         return sum == 1
 
     def roll(self):
-        """ Return an outcome based on the probabilities in the mask """
+        """ Return an outcome based on the probabilities in the mask.
+        
+        Returns:
+            The outcome of this rule's transformation, according to the probability distribution.
+        """
         roll = random.random()
         sum = 0
         for item in self.mask:
-            sum += item[1]
-            if sum >= roll: return item[0]
+            sum += item.prob
+            if sum >= roll: return item.elem
         return None
 
     def __str__(self):
-        """ Use print-friendly string rep """
+        """ String representation of the ProbabilityMask
+        
+        Returns:
+            A console-friendly string representation
+        """
         return self.printable()
 
-    """ Return a stdout-friendly version of the mask """
     def asPrintString(self):
+        """ Printable string representation.
+
+        Returns:
+            A console-friendly string representation.
+        """
         result = str()
         for item in self.mask:
             result += f"{item[0]}: {item[1] * 100}%\n"
         return result
 
     def asParseString(self):
-        """ Return a parser-friendly string representation """
+        """ Serializable string representation.
+
+        Returns:
+            An XML-friendly string representation. """
         result = ""
         format = "<case prob=\"{0}\" result=\"{1}\">\n"
         for item in self.mask:
