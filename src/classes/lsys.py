@@ -32,9 +32,9 @@ produce fractal images. L-Systems have:
         Where 'symbol' is a variable symbol and 'rule' is a rule object (see rule.py):
 """
 
-class lsys( object ):
+class Lsys( object ):
     """
-    An 'lsys' object represents and L-System.
+    An L-System.
     It has:
         A Name
         An Angle
@@ -121,15 +121,6 @@ class lsys( object ):
         """ Returns True if the lsys has valid and complete fields """
         return len(self.name) > 0 and len(self.axiom) > 0 and len(self.ruleset) > 0 and self.angle is not 0
 
-    def isStochastic(self):
-        for var in self.ruleset.keys():
-            if len(self.ruleset[var][0]) > 1:
-                return True
-        return False
-
-    def isContextSensitive(self):
-        return False
-
     def getResult( self, var, left_token, right_token ):
         """ Get the resultant string, given the right and left tokens
         var - A variable symbol in this lsys' alphabet
@@ -138,6 +129,12 @@ class lsys( object ):
         """
         return self.ruleset[var].getResult( left_token, right_token )
 
-def createLsys():
+def getEmptyLsys():
     """ Create and return an lsys with default params """
-    return lsys( str(), int(), str(), dict() )
+    return Lsys( str(), int(), str(), dict() )
+
+
+def DLsys(Lsys):
+    pass
+
+

@@ -4,12 +4,12 @@
     By Alex Piazza
 
     The different kinds of rules are what make L-Systems as complex as they are.
-    'Rules' generally describe the way a variable is transformed into symbol strings on an iteration by iteration basis.
+    'Rules' generally describe the way a variable is transformed into a string of variables per iteraion.
     There are many ways that a variable can be mapped to resultant strings, a few ways are described below.
 
 - Deterministically -
     This is the most strightforward: Each variable maps to a single result string which is always used to suppliment the
-    variable during the transformation. Most of the already implemented L-Systems in all.xml are deterministic.
+    variable during the transformation. Most of the already-implemented L-Systems in all.xml are deterministic.
     These are called 'deterministic' because the result yielded by a variable is determined and never changes.
     Ex. 'A' -> 'ABC'
 
@@ -53,13 +53,9 @@
 """
 
 import re
+from util.probmask import ProbabilityMask
 
 DEFAULT_RESULT_STRING = ""
-
-try:
-    import numpy            # For choosing symbol string with weighted probabilities
-except ImportError:
-    print("Warning: Could not import 'numpy'. You will be unable to draw stochastic L-systems.")
 
 class rule( object ):
 
@@ -67,27 +63,25 @@ class rule( object ):
 
         assert isinstance( var, str )
 
-
         self.var = var
         self.productions = dict()
+        self.mask = ProbabilityMask()
 
     def __repr__(self):
         return "Rule: TODO"
 
     def getResult(self, left_token, right_token):
         """ Get the string output (result) associated with this rule """
-
-        for context in self.productions.keys():
-            cases = self.productions[context]
-
-            if (re.match(context.left, left_token) is not None) and (re.match(context.right, right_token) is not None):
-                # Note: numpy.random.choice always returns a list
-                return numpy.random.choice( cases.results, 1, p=cases.probabilities )[0]
-        return DEFAULT_RESULT_STRING
+        return self.mask.roll()
+                        
+    def isStochastic(self):
+        """ Check whether this rule is stochastic or not. """
+        return not self.mask.isEmpty()
 
     def isContextSensitive(self):
+        """ Check whetehr this rule is context-sensitive or not """
         for context in self.productions.keys():
-            if context.right is not "/*" and context.left is not "/*":
+            if context.right != "/*" and context.left != "/*":
                 return False
         return True
 

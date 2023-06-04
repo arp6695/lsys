@@ -74,6 +74,7 @@ from classes.lsys import *              # For creating lsys objects
 from classes.rule import *              # For creating Rule Objects
 from classes.cases import *
 from classes.context import *
+from util.probmask import *
 
 import xml.etree.ElementTree as ET      # For parsing XML files
 import fractions                        # For interpreting fractions parsed from data
@@ -88,7 +89,7 @@ def getLsysFromFile( filename ):
     # Iterate thru all lsys objects in root
     for child in root:
 
-        l = createLsys()
+        l = getEmptyLsys()
         ruleset = dict()
 
 
@@ -118,8 +119,10 @@ def getLsysFromFile( filename ):
                     # Assume Probability is '1' unless otherwise specified
                     try:
                         cases.probabilities.append( float( fractions.Fraction( field.attrib["prob"] ) ) )
+                        ruleObject.mask.add( field.attrib["result"].replace(" ", ""), float( fractions.Fraction( field.attrib["prob"] ) ) ) 
                     except KeyError:
                         cases.probabilities.append( 1.0 )
+                        ruleObject.mask.add( field.attrib["result"].replace(" ", ""), 1.0 ) 
 
                     cases.results.append( field.attrib["result"].replace(" ", "") )
 
