@@ -62,7 +62,9 @@ class Rule( object ):
 
     def __init__(self, token=str() ):
         """ Constructor. 
-        token - The token that this rule will transform.
+
+        Args:
+            token: The token that this rule will transform.
         """
         assert isinstance( token, str )
 
@@ -70,20 +72,39 @@ class Rule( object ):
         self.mask = ProbabilityMask()
 
     def __repr__(self):
-        return "Rule: TODO"
+        """ String representation.
+
+        Returns:
+            A console-friendly string representation of a rule.
+        """
+        return f"{self.token} -> " + self.mask.asPrintString()
 
     def getResult(self, left_token="", right_token=""):
         """ Get the string output (result) associated with this rule 
-        left_token  - the token to the left of this token. Context-sensitive grammars override this.
-        right_token - the token to the right of this token. Context-sensitive grammars override this.
+        
+        Args:
+            left_token: The token to the left of this token. Context-sensitive grammars override this.
+            right_token: The token to the right of this token. Context-sensitive grammars override this.
+        Returns:
+            The result of applying this rule to the token, relative to the adjacent tokens.
         """
         return self.mask.roll()
                         
     def isStochastic(self):
-        """ Check whether this rule is stochastic or not. """
-        return not self.mask.isEmpty()
+        """ Check whether this rule is stochastic or not.
+        
+        Returns:
+            True if this rule has a properly populated probability mask. False otherwise
+        """
+        result = not self.mask.isEmpty()
+        result &= len(self.mask) != 1       # Deterministic rules have only one outcome.
+        return result
 
     def isContextSensitive(self):
-        """ Check whether this rule is context-sensitive or not """
+        """ Check whether this rule is context-sensitive or not.
+        
+        Returns:
+            True if this rule is context-sensitive. False otherwise.
+        """
         # TODO
         return False

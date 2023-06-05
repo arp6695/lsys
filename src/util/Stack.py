@@ -15,9 +15,10 @@ class Stack( object ):
         self.top = None
 
     def __repr__(self):
-        """
-            String representation:
-            "data1 -> data2 -> data3 -> ... -> dataN -> None"
+        """ String representation:
+
+        Returns:
+            A console-friendly string representation.
         """
         string = ""
         ptr = self.top
@@ -28,26 +29,39 @@ class Stack( object ):
         return string
 
     def push( self, data ):
-        """ Push new data onto the stack """
+        """ Push data to the top of the stack.
+        
+        Args:
+            data: New datum to put on the top of the stack.
+        """
         newTop = ( data, self.top )
         self.top = newTop
 
     def pop( self ):
-        """ Pop and return the top of the stack """
+        """ Remove the topmost item and return it.
+        
+        Returns:
+            The topmost datum.
+        """
         assert not self.isEmpty()
         data = self.top[0]          # Get Data in tuple
         self.top = self.top[1]      # Set top to current top's 'next' reference
         return data
 
     def peek( self ):
-        """ Return top of the stack w/o removing it. """
+        """ Peek at the top of the stack, without removing it.
+        
+        Returns:
+            The topmost datum.
+        """
         if self.isEmpty():
             return None
         return self.top[0]
 
     def isEmpty( self ):
-        """ True iff top is None -> Stack is empty"""
+        """ Check if the stack is empty or not.
+        
+        Returns:
+            True if there is at least one data in the stack.
+        """
         return self.top == None
-
-def getStack():
-    return Stack()

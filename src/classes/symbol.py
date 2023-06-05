@@ -13,16 +13,30 @@
         evaluated true for the parametric to be considered true
     params - A map of string variable names to integer/float values
 
+
+NOTE: Unused?
 """
 
 class symbol(object):
 
     def __init__( self, token, bools=[], params=dict() ):
+        """ Constructor
+        
+        Args:
+            token: The string token that uniquely identifies this symbol.
+            bools: Boolean expressions that should be evaluated to true 
+            params: Map of tokens that parameterize this symbol.
+        """
         self.token = token
         self.bools = bools
         self.params = params
 
     def evalBools( self ):
+        """ Evaluate this symbol's boolean expressions.
+
+        Returns:
+            True if all the boolean expressions evaluate to true.
+        """
 
         # Variables must be cast from params before being evaluated
         for var in self.params.keys():

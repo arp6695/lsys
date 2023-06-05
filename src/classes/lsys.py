@@ -33,18 +33,19 @@ produce fractal images. L-Systems have:
 """
 
 class Lsys( object ):
-    """
-    An L-System.
-    It has:
-        A Name
-        An Angle
-        An Axiom
-        A Ruleset
-        An Alphabet, of constants and variables
-    """
+
 
     def __init__( self, name, angle, axiom, ruleset ):
-        """ Constructor for the lsys object """
+        """ Constructor
+    
+        Args:
+            name: A string identifier representing this L-System.
+            angle: The default angle that the turtle should turn.
+            axiom: The default string that will be operated upon
+            ruleset: The map of tokens to rules that transform those tokens.
+        Raises:
+            IOError: If any of the parameters are improperly typed.
+        """
 
         if not isinstance(axiom, str):
             raise IOError("Axiom must be a string.")
@@ -66,7 +67,11 @@ class Lsys( object ):
         self.alphabet = self.genAlphabet()
 
     def __repr__( self ):
-        """ Create and return the string representation of an lsys object """
+        """ Create and return the string representation of an lsys object.
+        
+        Return:
+            Console-friendly string representation of an L-System.
+        """
         result = "Name: {0}\nAngle: {1} degrees\nAlphabet: {2}\nAxiom: {3}\n{4}"
 
         rule_string = ""
@@ -102,7 +107,11 @@ class Lsys( object ):
         return self.vars
 
     def genAlphabet(self):
-        """ Create and return the alphabet of this lsys"""
+        """ Create and return the alphabet of this lsys.
+        
+        Returns:
+            A list containing every symbol that this L-System could generate.
+        """
         result = []
         for var in self.ruleset.keys():
             if var not in result:
@@ -116,23 +125,24 @@ class Lsys( object ):
         return result
 
     def isComplete(self):
-        """ Returns True if the lsys has valid and complete fields """
+        """ Check if this L-System object has been populated compeltely and correctly.
+        
+        Returns:
+            True if the lsys has valid and complete fields. False otherwise.
+        """
         return len(self.name) > 0 and len(self.axiom) > 0 and len(self.ruleset) > 0 and self.angle is not 0
 
     def getResult( self, var, left_token, right_token ):
         """ Get the resultant string, given the right and left tokens
-        var - A variable symbol in this lsys' alphabet
-        rotken - A symbol in the lsys' alphabet, to the right of 'var'
-        ltoken - A symbol in the lsys' alphabet, to the left of 'var'
+
+        Args:
+            var: A variable symbol in this lsys' alphabet
+            rotken: A symbol in the lsys' alphabet, to the right of 'var'
+            ltoken: A symbol in the lsys' alphabet, to the left of 'var'
         """
         return self.ruleset[var].getResult( left_token, right_token )
 
 def getEmptyLsys():
     """ Create and return an lsys with default params """
     return Lsys( str(), int(), str(), dict() )
-
-
-def DLsys(Lsys):
-    pass
-
 

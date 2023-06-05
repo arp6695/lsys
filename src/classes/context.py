@@ -5,15 +5,18 @@
     Used to support context-sensitive grammars.
 """
 
-class context(object):
+class Context(object):
 
-    def __init__(self, left, right):
-        """ Constructor.  """
+    def __init__(self, left="/*", right="/*"):
+        """ Constructor.
+        
+        Args:
+            left: The left token.
+            right: The right token.
+        """
         assert isinstance(left, str)
         assert isinstance(right, str)
 
         self.right = right
         self.left = left
 
-def getContext():
-    return context("/*", "/*")

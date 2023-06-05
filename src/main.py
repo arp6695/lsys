@@ -36,16 +36,16 @@ import datetime             # For naming images
 import turtle as t          # For Drawing TODO: Move this
 from math import sqrt
 
-from util.IO import *       # For Reading/Writing lsys to/from files
-from util.Stack import *    # For Stack support
+from util.io import *       # For Reading/Writing lsys to/from files
+from util.stack import *    # For Stack support
 
 try:
-    import canvasvg         # For saving images; NOTE: I believe this is a non-standard module
+    import canvasvg         # For saving images. This is a non-standard module, so report it if it cannot be opened.
 except ImportError:
     print("Warning: Could not import 'canvasvg'. You will be unable to save images.")
 
 # Global Stack (for saving turtle position and heading between recursive function calls)
-STACK = getStack()
+STACK = Stack()
 
 DEFAULT_COLOR_FILE = "src/misc/colors.xml"
 
