@@ -59,12 +59,13 @@ except ValueError:
     COLORS = None
 
 def chooseAction( token, size, angle ):
-    """
-    Determine which turtle action to use.
+    """ Determine which turtle action to use.
+    
     Helper for recursive turtle implementation
-    token - a string, token from lsys alphabet
-    size - an integer, the length the turtle will go forward
-    angle - an integer, the angle associated with the lsys
+    Args:
+        token: A string, token from lsys alphabet
+        size: An integer, the length the turtle will go forward
+        angle: An integer, the angle associated with the lsys
     """
     global STACK
 
@@ -103,18 +104,21 @@ def chooseAction( token, size, angle ):
 
     return None
 
-def runLsys( l, n, s ):
-    """
-    Recursive function that recurses a given number of times, and determines turtle action.
-    l - an lsys object
-    n - an integer, number of recursions
-    s - an integer, unit size of turtle
+def runLsys( lsys, depth, size ):
+    """ Recursive function that recurses a given number of times, and determines turtle action.
+    
+    Args:
+        lsys: An lsys object
+        depth: Number of recursions
+        size: Unit size of turtle
+    Raises:
+        RecursionError: If the maximum number of stack frame is exceeded.
     """
 
     # Clear stack, failsafe against unbalanced lsys
     global STACK
     if not STACK.isEmpty():
-        STACK = getStack()
+        STACK = Stack()
 
     t.setup()
     t.tracer(False) # Refresh the drawing manually, must use turtle.update() at the end
@@ -125,7 +129,7 @@ def runLsys( l, n, s ):
     print("The image is being generated. This may or may not take a while.")
 
     try:
-        runLsysHelper( l.axiom, l, n, s )
+        runLsysHelper( lsys.axiom, lsys, depth, size )
         t.hideturtle()
         t.update()
         print("Image generated. Use 'save' command to save the image to file.")
@@ -133,13 +137,14 @@ def runLsys( l, n, s ):
     except RecursionError:
         print("A Stack Overflow Error occurred; try again w/ fewer iterations.")
 
-def runLsysHelper( string, l, depth, size ):
-    """
-    Recursive Helper for 'runLsys'
-    string - a string to which the rules will be applied
-    l - an lsys object
-    depth - an integer, number of recursions
-    size - an integer, unit size of turtle
+def runLsysHelper( string, lsys, depth, size ):
+    """ Recursive Helper for 'runLsys'
+    
+    Args:
+        string: A string to which the rules will be applied
+        lsys: An lsys object
+        depth: Number of recursions
+        size: Unit size of turtle
     """
 
     global COLORS
@@ -182,13 +187,13 @@ def runLsysHelper( string, l, depth, size ):
                 size_multiplier = float( s[0:] )
 
         # Character must correspond to some executable action
-        elif depth <= 0 or char not in l.getVars():
-            chooseAction( char, size * size_multiplier, l.angle )
+        elif depth <= 0 or char not in lsys.getVars():
+            chooseAction( char, size * size_multiplier, lsys.angle )
 
         # Otherwise recurse with a rule string
         else:
-            s = l.getResult( char, string[i-1] if i > 0 else "", string[i+1] if i < len(string)-1 else "" )
-            runLsysHelper( s, l, depth-1, size * size_multiplier )
+            s = lsys.getResult( char, string[i-1] if i > 0 else "", string[i+1] if i < len(string)-1 else "" )
+            runLsysHelper( s, lsys, depth-1, size * size_multiplier )
 
 def printHelp():
     """ Print Help: read help.txt """
@@ -196,9 +201,13 @@ def printHelp():
         print(line, end="")
 
 def loadLsysFromFile( filename ):
-    """
-    Return an lsys collection gotten from a parsed filename.
+    """ Return an lsys collection gotten from a parsed filename.
     Checks for errors and prints error messages.
+
+    Args:
+        filename: The file that the program will attempt to use to load L-Systems into memory.
+    Returns:
+        List of L-System objects.
     """
     lst = list()
     try:
@@ -216,7 +225,14 @@ def loadLsysFromFile( filename ):
     return lst
 
 def getLsysFromCollection( lst, param ):
+    """ Find an L-System object given some user input.
 
+    Args:
+        lst: List of L-System to search through.
+        param: User input parameter used to match one of the L-Systems.
+    Returns:
+        An L-System object that is 'matched' by the parameter.
+    """
     obj = None
 
     if param.isdigit():     # Allow user to select lsys by number in collection
@@ -247,6 +263,7 @@ def display( param, lst ):
             print( l )
 
 def main():
+    """ Primary Execution Loop. """
     size = 5
 
     global COLORS
